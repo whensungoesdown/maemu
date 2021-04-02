@@ -1,8 +1,97 @@
 #include <stdio.h>
+#include <assert.h>
+
+// a char represents 1 bit
+
+#define HIGH_CYCLE	5
+#define LOW_CYCLE	5
+#define RUN_CYCLES	25
+
+
+int top (char bit_clk, int b_rising_edge, int b_falling_edge)
+{
+	if (b_rising_edge) printf("r");
+	if (b_falling_edge) printf("f");
+
+	if (bit_clk)
+	{
+		printf("-");
+	}
+	else
+	{
+		printf("_");
+	}
+}
 
 int main (void)
 {
-    printf("Hello World!\n");
-    
-    return 0;
+	int high_cycle_count = 0;
+	int low_cycle_count = 0;
+	int b_rising_edge = 0;
+	int b_falling_edge = 0;
+	char bit_clk =0;
+
+	int run_cycles = 0;
+
+	
+	printf("Microarchitecture emulator\n");
+
+	// main loop
+
+	// start with a rising edge
+	b_rising_edge = 1;
+	b_falling_edge = 0;
+	bit_clk = 1;
+
+	while (run_cycles < RUN_CYCLES)
+	{
+
+		if (1 == bit_clk)
+		{
+			if (high_cycle_count++ < HIGH_CYCLE)
+			{
+			}
+			else
+			{
+				// high duty cycle runs out
+
+				bit_clk = 0;
+				b_falling_edge = 1;
+				high_cycle_count = 0; // clear to 0
+				continue;
+			}
+		}
+		else if (0 == bit_clk)
+		{
+			if (low_cycle_count++ < LOW_CYCLE)
+			{
+			}
+			else
+			{
+				bit_clk = 1;
+				b_rising_edge = 1;
+				low_cycle_count = 0;
+				continue;
+			}
+		}
+		else
+		{
+			assert(0);
+		}
+
+		top(bit_clk, b_rising_edge, b_falling_edge);
+
+
+
+		// rising and falling edge only last for one cycle
+		if (1 == b_rising_edge) b_rising_edge = 0;
+		if (1 == b_falling_edge) b_falling_edge = 0;
+
+		run_cycles++;
+	}
+
+
+	printf("\n\n");
+
+	return 0;
 }
