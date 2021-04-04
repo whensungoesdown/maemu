@@ -3,25 +3,12 @@
 
 // a char represents 1 bit
 
-#define HIGH_CYCLE	5
-#define LOW_CYCLE	5
+#define HIGH_CYCLE	1
+#define LOW_CYCLE	1
 #define RUN_CYCLES	25
 
 
-int top (char bit_clk, int b_rising_edge, int b_falling_edge)
-{
-	if (b_rising_edge) printf("r");
-	if (b_falling_edge) printf("f");
-
-	if (bit_clk)
-	{
-		printf("-");
-	}
-	else
-	{
-		printf("_");
-	}
-}
+int top (char bit_clk, int b_rising_edge, int b_falling_edge);
 
 int main (void)
 {
