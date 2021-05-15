@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "core.h"
+#include "ram_2port.h"
 #include "helper.h"
 
 int top (char bit_clk, int b_rising_edge, int b_falling_edge)

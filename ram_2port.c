@@ -45,36 +45,36 @@ ram_2port (
 	char32bits2int(address_a, &nAddr_a);	
 	char32bits2int(address_b, &nAddr_b);	
 	
-	printf("ram_2port address_a 0x%x\n", nAddr_a);
-	printf("ram_2port address_b 0x%x\n", nAddr_b);
+	PRINTF("ram_2port address_a 0x%x\n", nAddr_a);
+	PRINTF("ram_2port address_b 0x%x\n", nAddr_b);
 
 
 	char32bits2int(data_a, &nData_a);
 	char32bits2int(data_b, &nData_b);
 
-	printf("ram_2port data_a 0x%x\n", nData_a);
-	printf("ram_2port data_b 0x%x\n", nData_b);
+	PRINTF("ram_2port data_a 0x%x\n", nData_a);
+	PRINTF("ram_2port data_b 0x%x\n", nData_b);
 
 
 	char32bits2int(q_a, &nQ_a);	
 	char32bits2int(q_b, &nQ_b);	
 
-	printf("ram_2port q_a 0x%x\n", nQ_a);
-	printf("ram_2port q_b 0x%x\n", nQ_b);
+	PRINTF("ram_2port q_a 0x%x\n", nQ_a);
+	PRINTF("ram_2port q_b 0x%x\n", nQ_b);
 
-	printf("ram_2port wren_a 0x%x\n", wren_a);
-	printf("ram_2port wren_b 0x%x\n", wren_b);
+	PRINTF("ram_2port wren_a 0x%x\n", wren_a);
+	PRINTF("ram_2port wren_b 0x%x\n", wren_b);
 
 	if (nAddr_a & 0x3)
 	{
-		printf("address_a is not 4-byte aligned\n");
+		PRINTF("address_a is not 4-byte aligned\n");
 		//nAddr_a &= (~0x3);
 	}
 
 
 	if (nAddr_b & 0x3)
 	{
-		printf("address_b is not 4-byte aligned\n");
+		PRINTF("address_b is not 4-byte aligned\n");
 		//nAddr_b &= (~0x3);
 	}
 

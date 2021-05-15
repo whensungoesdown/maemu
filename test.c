@@ -1,14 +1,31 @@
 #include <stdio.h>
 #include <string.h>
+#include "defines.h"
 #include "helper.h"
 #include "ram_2port.h"
+#include "rf.h"
+
+int test_opBit (void)
+{
+	int n = 0;
+
+	n = setBit(n, 0);
+
+	if (0x1 != n)
+	{
+		printf("test_opBit set bit 0, result 0x%x\n", n);
+		return -1;
+	}
+
+	return 0;
+}
 
 int test_char32bits2int(void)
 {
 	int output = 0;
 	char input1[32] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
 	char input2[32] = {0};
-	char input3[32] = {0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1};
+	char input3[32] = {0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1};
 	
 
 	char32bits2int(input1, &output);
@@ -26,9 +43,9 @@ int test_char32bits2int(void)
 	}
 
 	char32bits2int(input3, &output);
-	if (0x55555555 != output)
+	if (0xaaaaaa0a != output)
 	{
-		printf("test_char32bits2int input 01010....010101, should return int 0x55555555, result 0x%x\n", output);
+		printf("test_char32bits2int input 01010....010101, should return int 0xaaaaaa0a, result 0x%x\n", output);
 		return -1;
 	}
 
@@ -42,7 +59,7 @@ int test_int2char32bits(void)
 
 	char tmp1[32] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
 	char tmp2[32] = {0};
-	char tmp3[32] = {0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1};
+	char tmp3[32] = {0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1};
 	
 
 	int2char32bits(0xffffffff, output);
@@ -61,10 +78,10 @@ int test_int2char32bits(void)
 		return -1;
 	}
 
-	int2char32bits(0x55555555, output);
+	int2char32bits(0xaaaaaa0a, output);
 	if (0 != memcmp(output, tmp3, 32))
 	{
-		printf("test_int2char32bits input 0x55555555, should return char[32] 0101...0101, result:\n");
+		printf("test_int2char32bits input 0x55555555, should return char[32] 0101 0000 ... 0101, result:\n");
 		print_char32bits(output);
 		return -1;
 	}
@@ -88,7 +105,7 @@ int test_ram_2port (void)
 	int nData_b = 0;
 
 	char data_a[32] = {0};
-	char data_b[32] = {0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1};
+	char data_b[32] = {0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1};
 
 	int nQ_a = 0;
 	int nQ_b = 0;
@@ -116,7 +133,7 @@ int test_ram_2port (void)
 
 
 	//
-	// write 0x55555555 to memory+8
+	// write 0xaaaaaaa0 to memory+8
 	//
 
 	nAddr_b = 0x8;	
@@ -126,10 +143,101 @@ int test_ram_2port (void)
 	// read
 	ram_2port(address_a, address_b, 1, data_a, data_b, 0, 0, q_a, q_b);
 	char32bits2int(q_b, &nQ_b);
-	if (0x55555555 != nQ_b)
+	if (0xaaaaaaa0 != nQ_b)
 	{
-		printf("test_ram_2port first write 0x55555555 to address 0x8, then read it out\n");
+		printf("test_ram_2port first write 0xaaaaaaa0 to address 0x8, then read it out\n");
 		printf("returns: 0x%x\n", nQ_b);
+		return -1;
+	}
+
+	return 0;
+}
+
+int test_rf (void)
+{
+	int nRs1_idx = 0;
+	int nRs2_idx = 0;
+	char rs1_idx[5] = {0};
+	char rs2_idx[5] = {0};
+	int nRs1_data = 0;
+	int nRs2_data = 0;
+	char rs1_data[32] = {0};
+	char rs2_data[32] = {0};
+
+	int nRd_idx = 0;
+	char rd_idx[5] = {0};
+	int nRd_data = 0;
+	char rd_data[32] = {0};
+
+	// write 0xaaaaaaaa to reg[1]
+	nRd_idx = 1;
+	int2charnbits(nRd_idx, rd_idx, 5);
+	print_charnbits(rd_idx, 5);
+
+	nRd_data = 0xaaaaaaaa;
+	int2char32bits(nRd_data, rd_data);
+
+	rf(
+		rs1_idx, 
+		rs2_idx,
+		rs1_data, 
+		rs2_data,
+		1, // rd_wen
+		rd_idx, 
+		rd_data,
+		1, // clk
+		0  // rst
+	  );
+
+	// write 0xbbbbbbbb to reg[31]
+	nRd_idx = 31;
+	int2charnbits(nRd_idx, rd_idx, 5);
+	print_charnbits(rd_idx, 5);
+
+	nRd_data = 0xbbbbbbbb;
+	int2char32bits(nRd_data, rd_data);
+
+	rf(
+		rs1_idx, 
+		rs2_idx,
+		rs1_data, 
+		rs2_data,
+		1, // rd_wen
+		rd_idx, 
+		rd_data,
+		1, // clk
+		0  // rst
+	  );
+
+
+	// read reg[1] reg[31]
+	nRs1_idx = 1;
+	int2charnbits(nRs1_idx, rs1_idx, 5);
+	nRs2_idx = 31;
+	int2charnbits(nRs2_idx, rs2_idx, 5);
+
+	rf(
+		rs1_idx,
+		rs2_idx,
+		rs1_data,
+		rs2_data,
+		0, // rd_wen
+		rd_idx, 
+		rd_data,
+		1, // clk
+		0  // rst
+	  );
+
+
+	// check result
+	char32bits2int(rs1_data, &nRs1_data);
+	char32bits2int(rs2_data, &nRs2_data);
+
+
+	if (0xaaaaaaaa != nRs1_data || 0xbbbbbbbb != nRs2_data)
+	{
+		printf("rf read reg[1] reg[31]\n");
+		printf("returns 0x%x, 0x%x\n", nRs1_data, nRs2_data);
 		return -1;
 	}
 
@@ -141,6 +249,16 @@ int main(void)
 	int ret = 0;
 
 	printf("unit tests:\n");
+
+	ret = test_opBit();
+	if (0 != ret)
+	{
+		printf("test_opBit() failed!\n");
+	}
+	else
+	{
+		printf("test_opBit() success!\n");
+	}
 
 	ret = test_char32bits2int();
 	if (0 != ret)
@@ -171,6 +289,20 @@ int main(void)
 	{
 		printf("test_ram_2port() success!\n");
 	}
+
+
+	ret = test_rf();
+	if (0 != ret)
+	{
+		printf("test_rf() failed!\n");
+	}
+	else
+	{
+		printf("test_rf() success!\n");
+	}
+
+
+
 	printf("end.\n\n");
 
 
