@@ -1,10 +1,13 @@
 #ifndef _HELPER_H_
 #define _HELPER_H_
 
-#undef _DEBUG
+
+//#undef _DEBUG
+#define _DEBUG
 
 #ifdef _DEBUG
-#define PRINTF(f_, ...) printf((f_), __VA_ARGS__)
+//#define PRINTF(f_, ...) printf((f_), __VA_ARGS__)
+#define PRINTF(...) printf(__VA_ARGS__)
 #else
 #define PRINTF(f_, ...) do {} while(0)
 #endif

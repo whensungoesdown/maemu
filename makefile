@@ -3,7 +3,7 @@ CFLAGS=-I.
 DEPS = core.h helper.h
 
 %.o: %.c $(DEPS)
-	$(CC) -c -g -o $@ $< $(CFLAGS)
+	$(CC) -c -g -Wall -o $@ $< $(CFLAGS)
 
 maemu: main.o top.o ifu.o helper.o ram_2port.o rf.o
 	$(CC) -o maemu main.o top.o ifu.o helper.o ram_2port.o rf.o

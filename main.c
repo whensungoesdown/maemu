@@ -5,7 +5,7 @@
 
 #define HIGH_CYCLE	1
 #define LOW_CYCLE	1
-#define RUN_CYCLES	25
+#define RUN_CYCLES	5
 
 
 int top (char bit_clk, int b_rising_edge, int b_falling_edge);

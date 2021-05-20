@@ -69,9 +69,9 @@ int print_char32bits (char* input)
 
 	for (i = 0; i < 32; i++)
 	{
-		PRINTF("%d ", input[i]);
+		printf("%d ", input[i]);
 	}
-	PRINTF("\n");
+	printf("\n");
 
 	return 0;
 }

@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <assert.h>
+#include "defines.h"
 #include "helper.h"
 #include "ram_2port.h"
 
@@ -18,15 +19,15 @@ int g_memory_size = MEMORY_SIZE;
 
 void
 ram_2port (
-	char address_a[32],
-	char address_b[32],
-	char clk,
-	char data_a[32],
-	char data_b[32],
-	char wren_a,
-	char wren_b,
-	char q_a[32],
-	char q_b[32]
+	__in  char address_a[32],
+	__in  char address_b[32],
+	__in  char clk,
+	__in  char data_a[32],
+	__in  char data_b[32],
+	__in  char wren_a,
+	__in  char wren_b,
+	__out char q_a[32],
+	__out char q_b[32]
 	)
 {
 	int nAddr_a = 0;
@@ -56,14 +57,14 @@ ram_2port (
 	PRINTF("ram_2port data_b 0x%x\n", nData_b);
 
 
-	char32bits2int(q_a, &nQ_a);	
-	char32bits2int(q_b, &nQ_b);	
+	//char32bits2int(q_a, &nQ_a);	
+	//char32bits2int(q_b, &nQ_b);	
 
-	PRINTF("ram_2port q_a 0x%x\n", nQ_a);
-	PRINTF("ram_2port q_b 0x%x\n", nQ_b);
+	//PRINTF("ram_2port q_a 0x%x\n", nQ_a);
+	//PRINTF("ram_2port q_b 0x%x\n", nQ_b);
 
-	PRINTF("ram_2port wren_a 0x%x\n", wren_a);
-	PRINTF("ram_2port wren_b 0x%x\n", wren_b);
+	//PRINTF("ram_2port wren_a 0x%x\n", wren_a);
+	//PRINTF("ram_2port wren_b 0x%x\n", wren_b);
 
 	if (nAddr_a & 0x3)
 	{
@@ -91,6 +92,8 @@ ram_2port (
 		{
 			nQ_a = g_memory[nAddr_a];
 			int2char32bits(nQ_a, q_a); 
+			//printf("nAddr_a 0x%x, nQ_a 0x%x, g_memory[0] 0x%x\n", nAddr_a, nQ_a, g_memory[0]);
+			//print_char32bits(q_a);
 		}
 	}
 	else

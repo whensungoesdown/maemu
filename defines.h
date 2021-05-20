@@ -4,6 +4,9 @@
 #define __input
 #define __output
 
+#define __in
+#define __out
+
 #define MAEMU_XLEN		32
 
 #define MAEMU_RFIDX_WIDTH	5

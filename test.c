@@ -159,15 +159,31 @@ int test_rf (void)
 	int nRs2_idx = 0;
 	char rs1_idx[5] = {0};
 	char rs2_idx[5] = {0};
+	
 	int nRs1_data = 0;
 	int nRs2_data = 0;
 	char rs1_data[32] = {0};
 	char rs2_data[32] = {0};
 
+	int nRs1_busy = 0;
+	int nRs2_busy = 0;
+	char rs1_busy[1] = {0};
+	char rs2_busy[1] = {0};
+
+	int nRs1_reorder = 0;
+	int nRs2_reorder = 0;
+	char rs1_reorder[3] = {0};
+	char rs2_reorder[3] = {0};
+
 	int nRd_idx = 0;
 	char rd_idx[5] = {0};
 	int nRd_data = 0;
 	char rd_data[32] = {0};
+	int nRd_busy = 0;
+	char rd_busy[1] = {0};
+	int nRd_reorder = 0;
+	char rd_reorder[3] = {0};
+
 
 	// write 0xaaaaaaaa to reg[1]
 	nRd_idx = 1;
@@ -182,9 +198,17 @@ int test_rf (void)
 		rs2_idx,
 		rs1_data, 
 		rs2_data,
+		rs1_busy,
+		rs2_busy,
+		rs1_reorder,
+		rs2_reorder,
+
 		1, // rd_wen
 		rd_idx, 
 		rd_data,
+		rd_busy,
+		rd_reorder,
+
 		1, // clk
 		0  // rst
 	  );
@@ -197,14 +221,28 @@ int test_rf (void)
 	nRd_data = 0xbbbbbbbb;
 	int2char32bits(nRd_data, rd_data);
 
+	nRd_busy = 1;
+	int2charnbits(nRd_busy, rd_busy, 1);
+
+	nRd_reorder = 3;
+	int2charnbits(nRd_reorder, rd_reorder, 3);
+
 	rf(
 		rs1_idx, 
 		rs2_idx,
 		rs1_data, 
 		rs2_data,
+		rs1_busy,
+		rs2_busy,
+		rs1_reorder,
+		rs2_reorder,
+
 		1, // rd_wen
 		rd_idx, 
 		rd_data,
+		rd_busy,
+		rd_reorder,
+
 		1, // clk
 		0  // rst
 	  );
@@ -221,9 +259,17 @@ int test_rf (void)
 		rs2_idx,
 		rs1_data,
 		rs2_data,
+		rs1_busy,
+		rs2_busy,
+		rs1_reorder,
+		rs2_reorder,
+
 		0, // rd_wen
 		rd_idx, 
 		rd_data,
+		rd_busy,
+		rd_reorder,
+
 		1, // clk
 		0  // rst
 	  );
@@ -232,12 +278,16 @@ int test_rf (void)
 	// check result
 	char32bits2int(rs1_data, &nRs1_data);
 	char32bits2int(rs2_data, &nRs2_data);
+	charnbits2int(rs1_busy, &nRs1_busy, 1);
+	charnbits2int(rs2_busy, &nRs2_busy, 1);
+	charnbits2int(rs1_reorder, &nRs1_reorder, 3);
+	charnbits2int(rs2_reorder, &nRs2_reorder, 3);
 
 
-	if (0xaaaaaaaa != nRs1_data || 0xbbbbbbbb != nRs2_data)
+	if (0xaaaaaaaa != nRs1_data || 0 != nRs1_busy || 0xbbbbbbbb != nRs2_data || 1 != nRs2_busy || 3 != nRs2_reorder)
 	{
 		printf("rf read reg[1] reg[31]\n");
-		printf("returns 0x%x, 0x%x\n", nRs1_data, nRs2_data);
+		printf("returns 0x%x, busy %d, reorder %d,    0x%x, busy %d, reorder %d\n", nRs1_data, nRs1_busy, nRs1_reorder, nRs2_data, nRs2_busy, nRs2_reorder);
 		return -1;
 	}
 
