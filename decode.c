@@ -18,8 +18,9 @@ decode (
 
 	int nSimm = 0;
 	int nRjIdx = 0;
-	int nRkIdx = 0;
+	//int nRkIdx = 0;
 	int nRdIdx = 0;
+
 
 
 	if (0 == memcmp(instr + 22, ADDI_W, 10))
@@ -34,7 +35,7 @@ decode (
 		charnbits2int(rj_idx, &nRjIdx, 5);
 		charnbits2int(rd_idx, &nRdIdx, 5);
 
-		PRINTF("ADDI.W $%d, $%d, %d\n", nRdIdx, nRjIdx, nSimm);
+		PRINTF("exu: decode: ADDI.W $%d, $%d, %d\n", nRdIdx, nRjIdx, nSimm);
 	}
 	else
 	{

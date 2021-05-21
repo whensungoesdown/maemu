@@ -7,14 +7,16 @@ extern int* g_memory;
 
 void
 ram_2port (
-	char address_a[32],
-	char address_b[32],
-	char clk,
-	char data_a[32],
-	char data_b[32],
-	char wren_a,
-	char wren_b,
-	char q_a[32],
-	char q_b[32]
+	__in  char address_a[32],
+	__in  char address_b[32],
+	__in  char clk,
+	__in  char rising_edge,
+	__in  char data_a[32],
+	__in  char data_b[32],
+	__in  char wren_a,
+	__in  char wren_b,
+	__out char q_a[32],
+	__out char q_b[32]
 	);
+
 #endif

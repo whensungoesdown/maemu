@@ -23,6 +23,7 @@ rf (
 	__input char rd_reorder[3],
 
 	__input char clk,
+	__input char rising_edge,
 	__input char rst
    );
 #endif

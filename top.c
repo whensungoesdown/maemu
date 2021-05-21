@@ -25,12 +25,12 @@ int top (char clk, int b_rising_edge, int b_falling_edge)
 
 
 	printf("\n");
-	if (b_rising_edge) printf("r");
-	if (b_falling_edge) printf("f");
+	if (b_rising_edge) printf("/");
+	if (b_falling_edge) printf("\\");
 
 	if (clk)
 	{
-		printf("-\n");
+		printf("~\n");
 	}
 	else
 	{
@@ -38,15 +38,19 @@ int top (char clk, int b_rising_edge, int b_falling_edge)
 	}
 	
 
-	ram_2port(pc_fetch, read_addr, clk, allzero, write_data, 0, 0, instr, read_data);
+	ram_2port(pc_fetch, read_addr, clk, b_rising_edge, allzero, write_data, 0, 0, instr, read_data);
 
-	ifu(clk, 0, read_addr, read_data, write_addr, write_data, pc_fetch, pc_next, pc_next_ena); 
+	ifu(clk, b_rising_edge, 0, read_addr, read_data, write_addr, write_data, pc_fetch, pc_next, pc_next_ena); 
 
-	pc_lat(pc_next_ena, pc_next, pc_fetch);
+	if (clk && !b_rising_edge)
+	{
+		// combinational
+		pc_lat(pc_next_ena, pc_next, pc_fetch);
+	}
 
 
 	// exu output branch_pc, jump_pc, excp_pc back to ifu to make the decision for next fetching
-	exu(clk, 0, instr); // later 2 issue, exu(instr0, instr1)
+	exu(clk, b_rising_edge, 0, instr); // later 2 issue, exu(instr0, instr1)
 
 	return 0;	
 }

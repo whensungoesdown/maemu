@@ -4,6 +4,7 @@
 void
 exu (
 	__in char clk,
+	__in char rising_edge,
 	__in char rst,
 	__in char instr0[32]
     );

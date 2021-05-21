@@ -5,6 +5,7 @@ void
 ifu (
 	__in  char clk,
 	__in  char rst,
+	__in  char rising_edge,
 	__out char read_addr[32],
 	__in  char read_data[32],
 	__out char write_addr[32],

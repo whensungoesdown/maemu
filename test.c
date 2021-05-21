@@ -101,9 +101,6 @@ int test_ram_2port (void)
 	char address_a[32] = {0};
 	char address_b[32] = {0};
 
-	int nData_a = 0;
-	int nData_b = 0;
-
 	char data_a[32] = {0};
 	char data_b[32] = {0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1};
 
@@ -119,7 +116,7 @@ int test_ram_2port (void)
 	int2char32bits(nAddr_a, address_a);
 	int2char32bits(nAddr_b, address_b);
 
-	ram_2port(address_a, address_b, 1, data_a, data_b, 0, 0, q_a, q_b);
+	ram_2port(address_a, address_b, 1, 1, data_a, data_b, 0, 0, q_a, q_b);
 
 	char32bits2int(q_a, &nQ_a);
 	char32bits2int(q_b, &nQ_b);
@@ -138,10 +135,10 @@ int test_ram_2port (void)
 
 	nAddr_b = 0x8;	
 	int2char32bits(nAddr_b, address_b);
-	ram_2port(address_a, address_b, 1, data_a, data_b, 0, 1, q_a, q_b);
+	ram_2port(address_a, address_b, 1, 1, data_a, data_b, 0, 1, q_a, q_b);
 
 	// read
-	ram_2port(address_a, address_b, 1, data_a, data_b, 0, 0, q_a, q_b);
+	ram_2port(address_a, address_b, 1, 1, data_a, data_b, 0, 0, q_a, q_b);
 	char32bits2int(q_b, &nQ_b);
 	if (0xaaaaaaa0 != nQ_b)
 	{
@@ -175,6 +172,7 @@ int test_rf (void)
 	char rs1_reorder[3] = {0};
 	char rs2_reorder[3] = {0};
 
+	char rd_wen[1] = {0};
 	int nRd_idx = 0;
 	char rd_idx[5] = {0};
 	int nRd_data = 0;
@@ -186,6 +184,8 @@ int test_rf (void)
 
 
 	// write 0xaaaaaaaa to reg[1]
+	rd_wen[0] = 1;
+
 	nRd_idx = 1;
 	int2charnbits(nRd_idx, rd_idx, 5);
 	print_charnbits(rd_idx, 5);
@@ -203,17 +203,21 @@ int test_rf (void)
 		rs1_reorder,
 		rs2_reorder,
 
-		1, // rd_wen
+		rd_wen,
 		rd_idx, 
 		rd_data,
 		rd_busy,
 		rd_reorder,
 
 		1, // clk
+		1, // rising_edge
 		0  // rst
 	  );
 
 	// write 0xbbbbbbbb to reg[31]
+	
+	rd_wen[0] = 1; 
+
 	nRd_idx = 31;
 	int2charnbits(nRd_idx, rd_idx, 5);
 	print_charnbits(rd_idx, 5);
@@ -237,18 +241,21 @@ int test_rf (void)
 		rs1_reorder,
 		rs2_reorder,
 
-		1, // rd_wen
+		rd_wen,
 		rd_idx, 
 		rd_data,
 		rd_busy,
 		rd_reorder,
 
 		1, // clk
+		1, // rising_edge
 		0  // rst
 	  );
 
 
 	// read reg[1] reg[31]
+	rd_wen[0] = 0;
+
 	nRs1_idx = 1;
 	int2charnbits(nRs1_idx, rs1_idx, 5);
 	nRs2_idx = 31;
@@ -264,13 +271,14 @@ int test_rf (void)
 		rs1_reorder,
 		rs2_reorder,
 
-		0, // rd_wen
+		rd_wen,
 		rd_idx, 
 		rd_data,
 		rd_busy,
 		rd_reorder,
 
 		1, // clk
+		1, // rising_edge
 		0  // rst
 	  );
 

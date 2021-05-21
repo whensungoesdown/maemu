@@ -3,9 +3,9 @@
 
 // a char represents 1 bit
 
-#define HIGH_UNIT	1
-#define LOW_UNIT	1
-#define RUN_UNITS	8
+#define HIGH_UNIT	2
+#define LOW_UNIT	2
+#define RUN_UNITS	16
 
 
 int top (char bit_clk, int b_rising_edge, int b_falling_edge);

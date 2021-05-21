@@ -7,6 +7,7 @@
 void
 exu (
 	__in char clk,
+	__in char rising_edge,
 	__in char rst,
 	__in char instr0[32]
     )
@@ -42,8 +43,11 @@ exu (
 
 	if (0 == clk) return;
 
-	char32bits2int(instr0, &nInstr0);
-	PRINTF("exu: instr0 0x%x\n", nInstr0);
+	if (rising_edge)
+	{
+		char32bits2int(instr0, &nInstr0);
+		PRINTF("exu: instr0 0x%x\n", nInstr0);
+	}
 	
 
 	rf(
@@ -63,6 +67,7 @@ exu (
 		rd_reorder,
 
 		clk,
+		rising_edge,
 		rst
 	  );
 
@@ -71,8 +76,11 @@ exu (
 	char32bits2int(rk, &nRk);
 	charnbits2int(rd_wen, &nRdWen, 1);
 
-	PRINTF("exu: rj 0x%x, rk 0x%x,   wen %d, rd 0x%x\n", nRj, nRk, nRdWen, nRd);
-		
+	if (rising_edge)
+	{
+		PRINTF("exu: rj 0x%x, rk 0x%x,   wen %d, rd 0x%x\n", nRj, nRk, nRdWen, nRd);
+	}
+
 	decode(instr0, rj_idx, rk_idx, rd_idx, simm);
 
 	return;

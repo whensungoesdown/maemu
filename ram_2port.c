@@ -22,6 +22,7 @@ ram_2port (
 	__in  char address_a[32],
 	__in  char address_b[32],
 	__in  char clk,
+	__in  char rising_edge,
 	__in  char data_a[32],
 	__in  char data_b[32],
 	__in  char wren_a,
@@ -40,7 +41,7 @@ ram_2port (
 	int nQ_b = 0;
 
 
-	if (0 == clk) return; // only works on the rising edge
+	if (0 == clk || 0 == rising_edge) return; // only works on the rising edge
 
 
 	char32bits2int(address_a, &nAddr_a);	

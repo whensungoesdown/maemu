@@ -6,6 +6,7 @@
 void
 ifu (
 	__in  char clk,
+	__in  char rising_edge,
 	__in  char rst,
 	__out char read_addr[32],
 	__in  char read_data[32],
@@ -24,13 +25,19 @@ ifu (
 	if (0 == clk) return;
 
 
-	char32bits2int(pc_current, &nPcCurrent);
-	PRINTF("ifu: pc_current 0x%x\n", nPcCurrent);
 
-
-	adder(pc_current, Imm_4, pc_next);
-	pc_next_ena[0] = 1;
-
+	if (rising_edge)
+	{
+		char32bits2int(pc_current, &nPcCurrent);
+		PRINTF("ifu: pc_current 0x%x\n", nPcCurrent);
+	}
+	else
+	{
+	
+		// combinational logic
+		adder(pc_current, Imm_4, pc_next);
+		pc_next_ena[0] = 1;
+	}
 
 	return;
 }

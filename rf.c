@@ -30,6 +30,7 @@ rf (
 	__input char rd_reorder[3],
 
 	__input char clk,
+	__input char rising_edge,
 	__input char rst
    )
 {
@@ -54,7 +55,7 @@ rf (
 	}
 
 
-	if (0 == clk) return; // only works at the rising edge
+	if (0 == clk || 0 == rising_edge) return; // only works at the rising edge
 
 	charnbits2int(rs1_idx, &nRs1_idx, 5);
 	//assert(nRs1_idx >= 0 && nRs1_idx <= 31);
