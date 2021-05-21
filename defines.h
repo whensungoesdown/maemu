@@ -6,6 +6,7 @@
 
 #define __in
 #define __out
+//#define __inout
 
 #define MAEMU_XLEN		32
 

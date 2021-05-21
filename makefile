@@ -5,10 +5,10 @@ DEPS = core.h helper.h
 %.o: %.c $(DEPS)
 	$(CC) -c -g -Wall -o $@ $< $(CFLAGS)
 
-maemu: main.o top.o ifu.o helper.o ram_2port.o rf.o decode.o
-	$(CC) -o maemu main.o top.o ifu.o helper.o ram_2port.o rf.o decode.o
+maemu: main.o top.o ifu.o helper.o ram_2port.o rf.o decode.o latdff.o adder.o
+	$(CC) -o maemu main.o top.o ifu.o helper.o ram_2port.o rf.o decode.o latdff.o adder.o
 
-test: test.o helper.o ram_2port.o rf.o decode.o
-	$(CC) -o runtests test.o helper.o ram_2port.o rf.o decode.o
+test: test.o helper.o ram_2port.o rf.o decode.o latdff.o adder.o
+	$(CC) -o runtests test.o helper.o ram_2port.o rf.o decode.o latdff.o adder.o
 clean:
 	rm -f ./*.o ./maemu ./runtests
