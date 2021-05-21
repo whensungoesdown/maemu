@@ -5,7 +5,7 @@
 
 #define HIGH_UNIT	1
 #define LOW_UNIT	1
-#define RUN_UNITS	6
+#define RUN_UNITS	8
 
 
 int top (char bit_clk, int b_rising_edge, int b_falling_edge);

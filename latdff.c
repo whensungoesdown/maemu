@@ -28,3 +28,4 @@ pc_lat (
 
 	PRINTF("pc_lat: pc_reg 0x%x\n", nPcReg);
 }
+

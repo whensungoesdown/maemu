@@ -4,7 +4,7 @@
 #include "defines.h"
 #include "helper.h"
 
-int rf_data[32] = {0};    // data 32 bits
+int rf_data[32] = {0, 0, 0, 0, 0xaaaaaaaa, };    // data 32 bits
 int rf_busy[32] = {0};    // busy 1 bit
 int rf_reorder[32] = {0}; // reorder 3 bits
 
@@ -23,7 +23,7 @@ rf (
 	__output char rs1_reorder[3],
 	__output char rs2_reorder[3],
 
-	__input char rd_wen,
+	__input char rd_wen[1],
 	__input char rd_idx[5],
 	__input char rd_data[32],
 	__input char rd_busy[1],
@@ -111,7 +111,7 @@ rf (
 	charnbits2int(rd_busy, &nRd_busy, 1);
 	charnbits2int(rd_reorder, &nRd_reorder, 3);
 
-	if (0 == rd_wen)
+	if (0 == rd_wen[0])
 	{
 		// do nothing
 	}

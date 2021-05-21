@@ -16,7 +16,7 @@ rf (
 	__output char rs1_reorder[3],
 	__output char rs2_reorder[3],
 
-	__input char rd_wen,
+	__input char rd_wen[0],
 	__input char rd_idx[5],
 	__input char rd_data[32],
 	__input char rd_busy[1],
