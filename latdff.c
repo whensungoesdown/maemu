@@ -21,9 +21,10 @@ pc_lat (
 	{
 		char32bits2int(pc_next, &nPcNext);
 		int2char32bits(nPcNext, pc_reg);
-		PRINTF("pc_lat: pc_reg 0x%x\n", nPcReg);
 	}
 
 	char32bits2int(pc_reg, &nPcReg);
 	int2char32bits(nPcReg, q);
+
+	PRINTF("pc_lat: pc_reg 0x%x\n", nPcReg);
 }

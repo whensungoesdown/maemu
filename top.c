@@ -4,8 +4,9 @@
 #include "ram_2port.h"
 #include "helper.h"
 #include "latdff.h"
+#include "exu.h"
 
-int top (char bit_clk, int b_rising_edge, int b_falling_edge)
+int top (char clk, int b_rising_edge, int b_falling_edge)
 {
 
 	static char pc_next[32] = {0};
@@ -27,7 +28,7 @@ int top (char bit_clk, int b_rising_edge, int b_falling_edge)
 	if (b_rising_edge) printf("r");
 	if (b_falling_edge) printf("f");
 
-	if (bit_clk)
+	if (clk)
 	{
 		printf("-\n");
 	}
@@ -37,14 +38,15 @@ int top (char bit_clk, int b_rising_edge, int b_falling_edge)
 	}
 	
 
-	ram_2port(pc_fetch, read_addr, bit_clk, allzero, write_data, 0, 0, instr, read_data);
+	ram_2port(pc_fetch, read_addr, clk, allzero, write_data, 0, 0, instr, read_data);
 
-	ifu(bit_clk, 0, read_addr, read_data, write_addr, write_data, pc_fetch, pc_next, pc_next_ena, instr); 
+	ifu(clk, 0, read_addr, read_data, write_addr, write_data, pc_fetch, pc_next, pc_next_ena); 
 
 	pc_lat(pc_next_ena, pc_next, pc_fetch);
 
-	//printf("read instruction: \n");
-	//print_char32bits(instr);
+
+	// exu output branch_pc, jump_pc, excp_pc back to ifu to make the decision for next fetching
+	exu(clk, 0, instr); // later 2 issue, exu(instr0, instr1)
 
 	return 0;	
 }

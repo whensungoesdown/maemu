@@ -12,7 +12,7 @@
 //
 //};
 
-int data[MEMORY_SIZE/4] = {0x02803c02, 0xA, 0xB, 0};
+int data[MEMORY_SIZE/4] = {0x02803c02, 0x02843c03, 0xB, 0};
 
 int* g_memory = data; 
 int g_memory_size = MEMORY_SIZE;
