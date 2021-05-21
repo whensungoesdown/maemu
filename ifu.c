@@ -1,5 +1,7 @@
 #include <stdio.h>
+#include "defines.h"
 #include "helper.h"
+#include "decode.h"
 
 void
 ifu (
@@ -17,6 +19,8 @@ ifu (
 	int nInstr = 0;
 
 
+	if (0 == clk) return;
+
 	PRINTF("ifu\n");
 
 	char32bits2int(pc, &nPc);
@@ -24,6 +28,8 @@ ifu (
 
 	PRINTF("ifu: pc    0x%x\n", nPc);
 	PRINTF("ifu: instr 0x%x\n", nInstr);
+
+	decode(instr);
 
 	return;
 }

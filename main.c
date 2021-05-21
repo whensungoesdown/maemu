@@ -3,9 +3,9 @@
 
 // a char represents 1 bit
 
-#define HIGH_CYCLE	1
-#define LOW_CYCLE	1
-#define RUN_CYCLES	5
+#define HIGH_UNIT	1
+#define LOW_UNIT	1
+#define RUN_UNITS	6
 
 
 int top (char bit_clk, int b_rising_edge, int b_falling_edge);
@@ -30,12 +30,12 @@ int main (void)
 	b_falling_edge = 0;
 	bit_clk = 1;
 
-	while (run_cycles < RUN_CYCLES)
+	while (run_cycles < RUN_UNITS)
 	{
 
 		if (1 == bit_clk)
 		{
-			if (high_cycle_count++ < HIGH_CYCLE)
+			if (high_cycle_count++ < HIGH_UNIT)
 			{
 			}
 			else
@@ -50,7 +50,7 @@ int main (void)
 		}
 		else if (0 == bit_clk)
 		{
-			if (low_cycle_count++ < LOW_CYCLE)
+			if (low_cycle_count++ < LOW_UNIT)
 			{
 			}
 			else
