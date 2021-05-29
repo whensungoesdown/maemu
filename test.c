@@ -111,12 +111,17 @@ int test_ram_2port (void)
 	char q_b[32] = {0};
 
 
+	char const0[1] = {0};
+	char const1[1] = {1};
+
+
+
 	g_memory = test_data;
 
 	int2char32bits(nAddr_a, address_a);
 	int2char32bits(nAddr_b, address_b);
 
-	ram_2port(address_a, address_b, 1, 1, data_a, data_b, 0, 0, q_a, q_b);
+	ram_2port(address_a, address_b, 1, 1, data_a, data_b, const0, const0, q_a, q_b);
 
 	char32bits2int(q_a, &nQ_a);
 	char32bits2int(q_b, &nQ_b);
@@ -135,10 +140,10 @@ int test_ram_2port (void)
 
 	nAddr_b = 0x8;	
 	int2char32bits(nAddr_b, address_b);
-	ram_2port(address_a, address_b, 1, 1, data_a, data_b, 0, 1, q_a, q_b);
+	ram_2port(address_a, address_b, 1, 1, data_a, data_b, const0, const1, q_a, q_b);
 
 	// read
-	ram_2port(address_a, address_b, 1, 1, data_a, data_b, 0, 0, q_a, q_b);
+	ram_2port(address_a, address_b, 1, 1, data_a, data_b, const0, const0, q_a, q_b);
 	char32bits2int(q_b, &nQ_b);
 	if (0xaaaaaaa0 != nQ_b)
 	{
@@ -162,25 +167,25 @@ int test_rf (void)
 	char rs1_data[32] = {0};
 	char rs2_data[32] = {0};
 
-	int nRs1_busy = 0;
-	int nRs2_busy = 0;
-	char rs1_busy[1] = {0};
-	char rs2_busy[1] = {0};
+//	int nRs1_busy = 0;
+//	int nRs2_busy = 0;
+//	char rs1_busy[1] = {0};
+//	char rs2_busy[1] = {0};
 
-	int nRs1_reorder = 0;
-	int nRs2_reorder = 0;
-	char rs1_reorder[3] = {0};
-	char rs2_reorder[3] = {0};
+//	int nRs1_reorder = 0;
+//	int nRs2_reorder = 0;
+//	char rs1_reorder[3] = {0};
+//	char rs2_reorder[3] = {0};
 
 	char rd_wen[1] = {0};
 	int nRd_idx = 0;
 	char rd_idx[5] = {0};
 	int nRd_data = 0;
 	char rd_data[32] = {0};
-	int nRd_busy = 0;
-	char rd_busy[1] = {0};
-	int nRd_reorder = 0;
-	char rd_reorder[3] = {0};
+//	int nRd_busy = 0;
+//	char rd_busy[1] = {0};
+//	int nRd_reorder = 0;
+//	char rd_reorder[3] = {0};
 
 
 	// write 0xaaaaaaaa to reg[1]
@@ -198,16 +203,16 @@ int test_rf (void)
 		rs2_idx,
 		rs1_data, 
 		rs2_data,
-		rs1_busy,
-		rs2_busy,
-		rs1_reorder,
-		rs2_reorder,
+//		rs1_busy,
+//		rs2_busy,
+//		rs1_reorder,
+//		rs2_reorder,
 
 		rd_wen,
 		rd_idx, 
 		rd_data,
-		rd_busy,
-		rd_reorder,
+//		rd_busy,
+//		rd_reorder,
 
 		1, // clk
 		1, // rising_edge
@@ -225,27 +230,27 @@ int test_rf (void)
 	nRd_data = 0xbbbbbbbb;
 	int2char32bits(nRd_data, rd_data);
 
-	nRd_busy = 1;
-	int2charnbits(nRd_busy, rd_busy, 1);
+//	nRd_busy = 1;
+//	int2charnbits(nRd_busy, rd_busy, 1);
 
-	nRd_reorder = 3;
-	int2charnbits(nRd_reorder, rd_reorder, 3);
+//	nRd_reorder = 3;
+//	int2charnbits(nRd_reorder, rd_reorder, 3);
 
 	rf(
 		rs1_idx, 
 		rs2_idx,
 		rs1_data, 
 		rs2_data,
-		rs1_busy,
-		rs2_busy,
-		rs1_reorder,
-		rs2_reorder,
+//		rs1_busy,
+//		rs2_busy,
+//		rs1_reorder,
+//		rs2_reorder,
 
 		rd_wen,
 		rd_idx, 
 		rd_data,
-		rd_busy,
-		rd_reorder,
+//		rd_busy,
+//		rd_reorder,
 
 		1, // clk
 		1, // rising_edge
@@ -266,16 +271,16 @@ int test_rf (void)
 		rs2_idx,
 		rs1_data,
 		rs2_data,
-		rs1_busy,
-		rs2_busy,
-		rs1_reorder,
-		rs2_reorder,
+//		rs1_busy,
+//		rs2_busy,
+//		rs1_reorder,
+//		rs2_reorder,
 
 		rd_wen,
 		rd_idx, 
 		rd_data,
-		rd_busy,
-		rd_reorder,
+//		rd_busy,
+//		rd_reorder,
 
 		1, // clk
 		1, // rising_edge
@@ -286,16 +291,16 @@ int test_rf (void)
 	// check result
 	char32bits2int(rs1_data, &nRs1_data);
 	char32bits2int(rs2_data, &nRs2_data);
-	charnbits2int(rs1_busy, &nRs1_busy, 1);
-	charnbits2int(rs2_busy, &nRs2_busy, 1);
-	charnbits2int(rs1_reorder, &nRs1_reorder, 3);
-	charnbits2int(rs2_reorder, &nRs2_reorder, 3);
+//	charnbits2int(rs1_busy, &nRs1_busy, 1);
+//	charnbits2int(rs2_busy, &nRs2_busy, 1);
+//	charnbits2int(rs1_reorder, &nRs1_reorder, 3);
+//	charnbits2int(rs2_reorder, &nRs2_reorder, 3);
 
 
-	if (0xaaaaaaaa != nRs1_data || 0 != nRs1_busy || 0xbbbbbbbb != nRs2_data || 1 != nRs2_busy || 3 != nRs2_reorder)
+	if (0xaaaaaaaa != nRs1_data || 0xbbbbbbbb != nRs2_data)
 	{
 		printf("rf read reg[1] reg[31]\n");
-		printf("returns 0x%x, busy %d, reorder %d,    0x%x, busy %d, reorder %d\n", nRs1_data, nRs1_busy, nRs1_reorder, nRs2_data, nRs2_busy, nRs2_reorder);
+		printf("returns 0x%x, 0x%x\n", nRs1_data, nRs2_data);
 		return -1;
 	}
 

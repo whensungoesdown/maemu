@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #include "defines.h"
 #include "helper.h"
 
@@ -26,6 +27,22 @@ pc_lat (
 	char32bits2int(pc_reg, &nPcReg);
 	int2char32bits(nPcReg, q);
 
-	PRINTF("pc_lat: pc_reg 0x%x\n", nPcReg);
+	//PRINTF("pc_lat: pc_reg 0x%x\n", nPcReg);
 }
 
+void
+dff_instr_f2d (
+	__in  char clk,
+	__in  char rising_edge,
+	__in  char rst,
+	__in  char instr_f[32],
+	__out char instr_d[32]
+	)
+{
+	static char instr_reg[32] = {0};
+
+	if (0 == clk || 0 == rising_edge) return; // regester write only works at the rising edge
+
+	memcpy(instr_reg, instr_f, 32);
+	memcpy(instr_d, instr_reg, 32);
+}

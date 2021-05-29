@@ -29,7 +29,8 @@ ifu (
 	if (rising_edge)
 	{
 		char32bits2int(pc_current, &nPcCurrent);
-		PRINTF("ifu: pc_current 0x%x\n", nPcCurrent);
+		PRINTF("IFU\n");
+		PRINTF("  pc_current: 0x%x\n", nPcCurrent);
 	}
 	else
 	{

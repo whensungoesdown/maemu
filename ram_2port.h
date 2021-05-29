@@ -13,8 +13,8 @@ ram_2port (
 	__in  char rising_edge,
 	__in  char data_a[32],
 	__in  char data_b[32],
-	__in  char wren_a,
-	__in  char wren_b,
+	__in  char wen_a[1],
+	__in  char wen_b[1],
 	__out char q_a[32],
 	__out char q_b[32]
 	);

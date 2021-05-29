@@ -12,7 +12,15 @@
 //
 //};
 
-int data[MEMORY_SIZE/4] = {0x02803c02, 0x02843c03, 0x02843c83, 0};
+// addi.w $2, $0, 15
+// addi.w $3, $0, 271
+// addi.w $3, $4, 271 
+//int data[MEMORY_SIZE/4] = {0x02803c02, 0x02843c03, 0x02843c83, 0};
+
+// add.w $3, $1, $2
+// add.w $4, $0, $3
+// add.w $5, $0, $1
+int data[MEMORY_SIZE/4] = {0x00100823, 0x00100c04, 0x00100405, 0};
 
 int* g_memory = data; 
 int g_memory_size = MEMORY_SIZE;
@@ -25,8 +33,8 @@ ram_2port (
 	__in  char rising_edge,
 	__in  char data_a[32],
 	__in  char data_b[32],
-	__in  char wren_a,
-	__in  char wren_b,
+	__in  char wen_a[1],
+	__in  char wen_b[1],
 	__out char q_a[32],
 	__out char q_b[32]
 	)
@@ -47,15 +55,15 @@ ram_2port (
 	char32bits2int(address_a, &nAddr_a);	
 	char32bits2int(address_b, &nAddr_b);	
 	
-	PRINTF("ram_2port address_a 0x%x\n", nAddr_a);
-	PRINTF("ram_2port address_b 0x%x\n", nAddr_b);
+	//PRINTF("ram_2port address_a 0x%x\n", nAddr_a);
+	//PRINTF("ram_2port address_b 0x%x\n", nAddr_b);
 
 
 	char32bits2int(data_a, &nData_a);
 	char32bits2int(data_b, &nData_b);
 
-	PRINTF("ram_2port data_a 0x%x\n", nData_a);
-	PRINTF("ram_2port data_b 0x%x\n", nData_b);
+	//PRINTF("ram_2port data_a 0x%x\n", nData_a);
+	//PRINTF("ram_2port data_b 0x%x\n", nData_b);
 
 
 	//char32bits2int(q_a, &nQ_a);	
@@ -64,8 +72,8 @@ ram_2port (
 	//PRINTF("ram_2port q_a 0x%x\n", nQ_a);
 	//PRINTF("ram_2port q_b 0x%x\n", nQ_b);
 
-	//PRINTF("ram_2port wren_a 0x%x\n", wren_a);
-	//PRINTF("ram_2port wren_b 0x%x\n", wren_b);
+	//PRINTF("ram_2port wen_a 0x%x\n", wen_a[0]);
+	//PRINTF("ram_2port wen_b 0x%x\n", wen_b[0]);
 
 	if (nAddr_a & 0x3)
 	{
@@ -85,7 +93,7 @@ ram_2port (
 	{
 		nAddr_a = nAddr_a >> 2;
 
-		if (wren_a) 
+		if (wen_a[0]) 
 		{
 			g_memory[nAddr_a] = nData_a;
 		}
@@ -107,7 +115,7 @@ ram_2port (
 	{
 		nAddr_b = nAddr_b >> 2;
 
-		if (wren_b) 
+		if (wen_b[0]) 
 		{
 			g_memory[nAddr_b] = nData_b;
 		}
@@ -124,6 +132,23 @@ ram_2port (
 	}
 
 
+	PRINTF("RAM\n");
+	if (0 == wen_a[0])
+	{
+		PRINTF("  port_a read 0x%x: 0x%x\n", nAddr_a * 4, nQ_a);
+	}
+	else
+	{
+		PRINTF("  port_a write 0x%x: 0x%x\n", nAddr_a * 4, nData_a);
+	}
+	if (0 == wen_b[0])
+	{
+		PRINTF("  port_b read 0x%x: 0x%x\n", nAddr_b * 4, nQ_b);
+	}
+	else
+	{
+		PRINTF("  port_b write 0x%x: 0x%x\n", nAddr_b * 4, nData_b);
+	}
 
 	return;
 }
