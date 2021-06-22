@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #include "defines.h"
 #include "helper.h"
 #include "decode.h"
@@ -65,7 +66,67 @@ exu (
 	char regwrite[1] = {0};
 
 
-	if (0 == clk) return;
+
+	static char alu0_issue_e[0];
+	static char alu0_op_e[4];
+	static char alu0_rj_e[32];
+	static char alu0_rk_e[32];
+	static char alu0_rob_e[3];
+
+	static char _alu0_issue_e[0];
+	static char _alu0_op_e[4];
+	static char _alu0_rj_e[32];
+	static char _alu0_rk_e[32];
+	static char _alu0_rob_e[3];
+
+
+	static char alu1_issue_e[0];
+	static char alu1_op_e[4];
+	static char alu1_rj_e[32];
+	static char alu1_rk_e[32];
+	static char alu1_rob_e[3];
+
+	static char _alu1_issue_e[0];
+	static char _alu1_op_e[4];
+	static char _alu1_rj_e[32];
+	static char _alu1_rk_e[32];
+	static char _alu1_rob_e[3];
+
+
+	static char alu0_result_w[32] = {0};
+	static char alu0_rob_w[3] = {0};
+
+	static char _alu0_result_w[32] = {0};
+	static char _alu0_rob_w[3] = {0};
+
+
+	static char alu1_result_w[32] = {0};
+	static char alu1_rob_w[3] = {0};
+
+	static char _alu1_result_w[32] = {0};
+	static char _alu1_rob_w[3] = {0};
+
+
+
+	if (0 == clk)
+	{
+		// after the high cycle, in the low cycle
+		// update the signals that send to next stage registers
+		
+		memcpy(_alu0_issue_e, alu0_issue_e, 1);
+		memcpy(_alu0_op_e, alu0_op_e, 3);
+		memcpy(_alu0_rj_e, alu0_rj_e, 32);
+		memcpy(_alu0_rk_e, alu0_rk_e, 32);
+		memcpy(_alu0_rob_e, alu0_rob_e, 3);
+	
+		memcpy(_alu1_issue_e, alu1_issue_e, 1);
+		memcpy(_alu1_op_e, alu1_op_e, 3);
+		memcpy(_alu1_rj_e, alu1_rj_e, 32);
+		memcpy(_alu1_rk_e, alu1_rk_e, 32);
+		memcpy(_alu0_rob_e, alu1_rob_e, 3);
+
+		return;
+	}
 
 	if (rising_edge)
 	{
@@ -184,6 +245,8 @@ exu (
 		//rs_valid[0] = rob_valid[0] & rob_ready[0] & need_rs[0];
 		rs_valid[0] = need_rs[0];
 
+		// now only sends in one instructin but sents out two to ALU
+		// 
 		reservation_station(
 				rs_valid,
 				rs_ready,
@@ -197,12 +260,78 @@ exu (
 				rk_busy_d,
 				rk_d,
 				rk_reorder_d,
-				rob_idx
+
+				rob_idx,
+
+				// issue to alu
+				alu0_issue_e,
+				alu0_op_e,
+				alu0_rj_e,
+				alu0_rk_e,
+				alu0_rob_e,
+
+				alu1_issue_e,
+				alu1_op_e,
+				alu1_rj_e,
+				alu1_rk_e,
+				alu1_rob_e
 				);
 
 		display_reservation_station();
 
+		//
+		// Check conflicts, then issue to funtional units such as ALU 
+		//
+		// For now, we only have 2 ALUs, alu0 alu1
+		// each of them has pipleline registers for the operation and operands
+		//
+
 	}
 
+	//
+	// Next stage
+	//
+	
+	if (rising_edge)
+	{
+		//
+		// sequential logic
+		//
+
+		alu0(_alu0_issue_e, _alu0_op_e, _alu0_rj_e, _alu0_rk_e, _alu0_rob_e, alu0_result_w, alu0_rob_w);
+
+		alu1(_alu1_issue_e, _alu1_op_e, _alu1_rj_e, _alu1_rk_e, _alu1_rob_e, alu1_result_w, alu1_rob_w);
+
+	}
+	else
+	{
+		//
+		// combinational logic
+		//
+
+
+	}
+
+	//
+	// Next stage
+	//
+	
+	if (rising_edge)
+	{
+		//
+		// sequential logic
+		//
+
+		//rob_commit(_alu0_rob_w, _alu0_result_w, _alu1_rob_w, _alu1_result_w);
+
+	}
+	else
+	{
+		//
+		// combinational logic
+		//
+
+
+	}
 	return;
 }

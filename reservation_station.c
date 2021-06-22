@@ -60,7 +60,22 @@ reservation_station (
 	__in  char rk_data[32],
 	__in  char rk_reorder[3],
 
-	__in  char rob_idx[3]
+	__in  char rob_idx[3],
+
+
+	__out char alu0_issue_e[1],
+	__out char alu0_op_e[4],
+	__out char alu0_rj_e[32],
+	__out char alu0_rk_e[32],
+	__out char alu0_rob_e[3],
+
+
+	__out char alu1_issue_e[1],
+	__out char alu1_op_e[4],
+	__out char alu1_rj_e[32],
+	__out char alu1_rk_e[32],
+	__out char alu1_rob_e[3]
+
 
 
 //	__in  char busy[1],
@@ -124,6 +139,8 @@ reservation_station (
 
 	int nRobIdx = 0;
 
+	int i = 0;
+
 
 	if (0 == in_valid[0]) return;
 	// get a new entry, suppose r
@@ -168,6 +185,60 @@ reservation_station (
 	g_rs_busy[nR] = 1;
 	g_rs_dest[nR] = nRobIdx;
 	g_rs_op[nR] = nInstr;
+
+
+
+	//
+	// issue to the functional units when 2 operands both are available
+	//
+	
+	// uty: bug
+	// the reservation station slot need to release itself
+	// after issuing. The V and Q fields should maintain the setup time
+	// for the next stage pipleline register. But the busy bit may be 
+	// cleared.
+	// It looks like forming a loop in this way, maybe the reservation
+	// station slots can be released when committing.
+
+	i = 0;
+	while (i < RS_NUM)
+	{
+		i ++;
+
+		if (1 == g_rs_busy[i] && 0 == g_rs_qj[i] && 0 == g_rs_qk[i])
+		{
+			PRINTF("  Issue ALU0: add  rob_%d, 0x%x, 0x%x\n", g_rs_dest[i], g_rs_vj[i], g_rs_vk[i]);
+			alu0_issue_e[1] = 1;
+			// alu0_op_e
+			int2char32bits(g_rs_vj[i], alu0_rj_e);
+			int2char32bits(g_rs_vk[i], alu0_rk_e);
+			int2charnbits(g_rs_dest[i], alu0_rob_e, 3);
+
+			// bug: clear self busy bit
+			g_rs_busy[i] = 0;
+			break;
+		}
+	}
+
+	
+	while (i < RS_NUM)
+	{
+		i ++;
+
+		if (1 == g_rs_busy[i] && 0 == g_rs_qj[i] && 0 == g_rs_qk[i])
+		{
+			PRINTF("  Issue ALU1: add  rob_%d, 0x%x, 0x%x\n", g_rs_dest[i], g_rs_vj[i], g_rs_vk[i]);
+			alu1_issue_e[1] = 1;
+			// alu0_op_e
+			int2char32bits(g_rs_vj[i], alu1_rj_e);
+			int2char32bits(g_rs_vk[i], alu1_rk_e);
+			int2charnbits(g_rs_dest[i], alu1_rob_e, 3);
+
+			// bug: clear self busy bit
+			g_rs_busy[i] = 0;
+			break;
+		}
+	}
 
 	return;
 }

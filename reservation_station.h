@@ -18,27 +18,23 @@ reservation_station (
 	__in  char rk_data[32],
 	__in  char rk_reorder[3],
 
-	__in  char rob_idx[3]
+	__in  char rob_idx[3],
 
 
-//	__in  char busy[1],
-//	__in  char dest[3],
-//	__in  char op[20],
-//	__in  char vj[32],
-//	__in  char vk[32],
-//	__in  char qj[32],
-//	__in  char qk[32],
-//	__in  char a[32],
-//	__out char full[1]
+	__out char alu0_issue_e[1],
+	__out char alu0_op_e[4],
+	__out char alu0_rj_e[32],
+	__out char alu0_rk_e[32],
+	__out char alu0_rob_e[3],
 
 
-//	__out char out_valid[1],
-//	__in  char out_ready[1],
-//
-//	__out char rj[32],
-//	__out char rk[32],
-//	__out char rd_idx[5]
-   );
+	__out char alu1_issue_e[1],
+	__out char alu1_op_e[4],
+	__out char alu1_rj_e[32],
+	__out char alu1_rk_e[32],
+	__out char alu1_rob_e[3]
+
+	);
 
 void display_reservation_station (void);
 

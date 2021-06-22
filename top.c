@@ -44,7 +44,7 @@ void top (char clk, int b_rising_edge, int b_falling_edge)
 	{
 		//
 		// after each cycle, update wire for synchronous logic
-		//  update name to  _name __name ...
+		//  update name to  _name ...
 		//
 		memcpy(_instr, instr, 32);
 
