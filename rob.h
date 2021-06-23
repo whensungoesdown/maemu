@@ -11,6 +11,16 @@ rob (
     );
 
 void
+rob_writeback (
+	__in  char alu0_issue_w[1],
+	__in  char alu0_result_w[32],
+	__in  char alu0_rob_w[3],
+	__in  char alu1_issue_w[1],
+	__in  char alu1_result_w[32],
+	__in  char alu1_rob_w[3]
+	);
+
+void
 display_rob (void);
 
 #endif

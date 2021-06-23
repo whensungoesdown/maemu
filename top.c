@@ -27,7 +27,7 @@ void top (char clk, int b_rising_edge, int b_falling_edge)
 	char const0[1] = {0};
 
 
-	printf("\n");
+	printf("-------------------------------------------------------------------------------------------\n");
 	if (b_rising_edge) printf("/ (rising edge)  ");
 	if (b_falling_edge) printf("\\ (falling edge)  ");
 
@@ -48,7 +48,7 @@ void top (char clk, int b_rising_edge, int b_falling_edge)
 		//
 		memcpy(_instr, instr, 32);
 
-		return;
+		//return;
 	}
 	
 

@@ -5,6 +5,7 @@
 #define RS_NUM	8
 
 int rs_busy[RS_NUM] = {0}; // 1 bit
+int rs_issue[RS_NUM] = {0}; // 1 bit
 int rs_dest[RS_NUM] = {0}; // 3 bits
 int rs_op[RS_NUM] = {0}; // 20 bits
 int rs_vj[RS_NUM] = {0}; // 32 bits
@@ -14,6 +15,7 @@ int rs_qk[RS_NUM] = {0}; // 32 bits
 int rs_a[RS_NUM] = {0}; // 32 bits
 
 int* g_rs_busy = rs_busy;
+int* g_rs_issue = rs_issue;
 int* g_rs_dest = rs_dest;
 int* g_rs_op = rs_op;
 int* g_rs_vj = rs_vj;
@@ -63,18 +65,20 @@ reservation_station (
 	__in  char rob_idx[3],
 
 
-	__out char alu0_issue_e[1],
-	__out char alu0_op_e[4],
-	__out char alu0_rj_e[32],
-	__out char alu0_rk_e[32],
-	__out char alu0_rob_e[3],
+	__out char alu0_rs_d[3],
+	__out char alu0_issue_d[1],
+	__out char alu0_op_d[4],
+	__out char alu0_rj_d[32],
+	__out char alu0_rk_d[32],
+	__out char alu0_rob_d[3],
 
 
-	__out char alu1_issue_e[1],
-	__out char alu1_op_e[4],
-	__out char alu1_rj_e[32],
-	__out char alu1_rk_e[32],
-	__out char alu1_rob_e[3]
+	__out char alu1_rs_d[3],
+	__out char alu1_issue_d[1],
+	__out char alu1_op_d[4],
+	__out char alu1_rj_d[32],
+	__out char alu1_rk_d[32],
+	__out char alu1_rob_d[3]
 
 
 
@@ -142,7 +146,7 @@ reservation_station (
 	int i = 0;
 
 
-	if (0 == in_valid[0]) return;
+	//if (0 == in_valid[0]) return;
 	// get a new entry, suppose r
 	
 	//charnbits2int(r, &nR, 3);
@@ -164,6 +168,7 @@ reservation_station (
 	if (1 == nRjBusy)
 	{
 		g_rs_qj[nR] = nRjReorder;
+		g_rs_vj[nR] = 0;
 	}
 	else
 	{
@@ -175,6 +180,7 @@ reservation_station (
 	if (1 == nRkBusy)
 	{
 		g_rs_qk[nR] = nRkReorder;
+		g_rs_vk[nR] = 0;
 	}
 	else
 	{
@@ -183,8 +189,21 @@ reservation_station (
 	}
 
 	g_rs_busy[nR] = 1;
+	g_rs_issue[nR] = 0;
 	g_rs_dest[nR] = nRobIdx;
 	g_rs_op[nR] = nInstr;
+
+
+	//
+	// In the program, alu0_issue_d is a static string.
+	// In circuit, it's value should comes from a register, which is one
+	// reservation station entry.
+	//
+	// Here, we need to clear alu0_issue_d and alu1_issue_d.
+	// Because there may be no rs entry need to issue.
+	//
+	alu0_issue_d[0] = 0;
+	alu1_issue_d[0] = 0;
 
 
 
@@ -205,17 +224,28 @@ reservation_station (
 	{
 		i ++;
 
-		if (1 == g_rs_busy[i] && 0 == g_rs_qj[i] && 0 == g_rs_qk[i])
+		if ((1 == g_rs_busy[i]) && (0 == g_rs_issue[i]) && (0 == g_rs_qj[i]) && (0 == g_rs_qk[i]))
 		{
 			PRINTF("  Issue ALU0: add  rob_%d, 0x%x, 0x%x\n", g_rs_dest[i], g_rs_vj[i], g_rs_vk[i]);
-			alu0_issue_e[1] = 1;
-			// alu0_op_e
-			int2char32bits(g_rs_vj[i], alu0_rj_e);
-			int2char32bits(g_rs_vk[i], alu0_rk_e);
-			int2charnbits(g_rs_dest[i], alu0_rob_e, 3);
+			alu0_issue_d[0] = 1;
+			// alu0_op_d
+			int2char32bits(g_rs_vj[i], alu0_rj_d);
+			int2char32bits(g_rs_vk[i], alu0_rk_d);
+			int2charnbits(g_rs_dest[i], alu0_rob_d, 3);
+			int2charnbits(i, alu0_rs_d, 3);
 
 			// bug: clear self busy bit
-			g_rs_busy[i] = 0;
+			//g_rs_busy[i] = 0;
+			//g_rs_dest[i] = 0;
+			//g_rs_vj[i] = 0;
+			//g_rs_vk[i] = 0;
+			// fix: release rs at reservation_station_writeback()
+			//  think again, the busy has to be clear in this cycle
+			//  otherwise, the next coming cycle will issue this again
+			//
+
+			// only set issue field, commit will release this entry
+			g_rs_issue[i] = 1;  
 			break;
 		}
 	}
@@ -225,17 +255,28 @@ reservation_station (
 	{
 		i ++;
 
-		if (1 == g_rs_busy[i] && 0 == g_rs_qj[i] && 0 == g_rs_qk[i])
+		if ((1 == g_rs_busy[i]) && (0 == g_rs_issue[i]) && (0 == g_rs_qj[i]) && (0 == g_rs_qk[i]))
 		{
 			PRINTF("  Issue ALU1: add  rob_%d, 0x%x, 0x%x\n", g_rs_dest[i], g_rs_vj[i], g_rs_vk[i]);
-			alu1_issue_e[1] = 1;
-			// alu0_op_e
-			int2char32bits(g_rs_vj[i], alu1_rj_e);
-			int2char32bits(g_rs_vk[i], alu1_rk_e);
-			int2charnbits(g_rs_dest[i], alu1_rob_e, 3);
+			alu1_issue_d[0] = 1;
+			// alu1_op_d
+			int2char32bits(g_rs_vj[i], alu1_rj_d);
+			int2char32bits(g_rs_vk[i], alu1_rk_d);
+			int2charnbits(g_rs_dest[i], alu1_rob_d, 3);
+			int2charnbits(i, alu1_rs_d, 3);
 
 			// bug: clear self busy bit
-			g_rs_busy[i] = 0;
+			//g_rs_busy[i] = 0;
+			//g_rs_dest[i] = 0;
+			//g_rs_vj[i] = 0;
+			//g_rs_vk[i] = 0;
+			// fix: release rs at reservation_station_writeback()
+			//  think again, the busy has to be clear in this cycle
+			//  otherwise, the next coming cycle will issue this again
+			//
+
+			// only set issue field, commit will release this entry
+			g_rs_issue[i] = 1;  
 			break;
 		}
 	}
@@ -244,22 +285,104 @@ reservation_station (
 }
 
 
+void
+reservation_station_writeback (
+	__in  char alu0_issue_w[1],
+	__in  char alu0_result_w[32],
+	__in  char alu0_rob_w[3],
+
+	__in  char alu1_issue_w[1],
+	__in  char alu1_result_w[32],
+	__in  char alu1_rob_w[3]
+	)
+{
+	int nAlu0Result = 0;
+	int nAlu0Rob = 0;
+
+	int nAlu1Result = 0;
+	int nAlu1Rob = 0;
+
+	int i = 0;
+
+
+	char32bits2int(alu0_result_w, &nAlu0Result);
+	charnbits2int(alu0_rob_w, &nAlu0Rob, 3);
+
+	//PRINTF("  reservation_station_writeback(): alu0_result_w 0x%x\n", nAlu0Result);
+	//PRINTF("  reservation_station_writeback(): alu0_rob_w 0x%x\n", nAlu0Rob);
+
+	if (1 == alu0_issue_w[0])
+	{
+		// clear rs entry
+	//	g_rs_busy[nAlu0Rs] = 0;
+	//	g_rs_dest[nAlu0Rs] = 0;
+	//	g_rs_vj[nAlu0Rs] = 0;
+	//	g_rs_vk[nAlu0Rs] = 0;
+
+
+		for (i = 1; i < RS_NUM; i++)
+		{
+			if (nAlu0Rob == g_rs_qj[i])
+			{
+				g_rs_qj[i] = 0;
+				g_rs_vj[i] = nAlu0Result;
+			}
+			if (nAlu0Rob == g_rs_qk[i])
+			{
+				g_rs_qk[i] = 0;
+				g_rs_vk[i] = nAlu0Result;
+			}
+		}
+	}
+
+
+	char32bits2int(alu1_result_w, &nAlu1Result);
+	charnbits2int(alu1_rob_w, &nAlu1Rob, 3);
+
+
+	if (1 == alu1_issue_w[0])
+	{
+		// clear rs entry
+	//	g_rs_busy[nAlu1Rs] = 0;
+	//	g_rs_dest[nAlu1Rs] = 0;
+	//	g_rs_vj[nAlu1Rs] = 0;
+	//	g_rs_vk[nAlu1Rs] = 0;
+
+
+		for (i = 1; i < RS_NUM; i++)
+		{
+			if (nAlu1Rob == g_rs_qj[i])
+			{
+				g_rs_qj[i] = 0;
+				g_rs_vj[i] = nAlu1Result;
+			}
+			if (nAlu1Rob == g_rs_qk[i])
+			{
+				g_rs_qk[i] = 0;
+				g_rs_vk[i] = nAlu1Result;
+			}
+		}
+	}
+
+	return;
+}
+
 void display_reservation_station (void)
 {
 	int i = 0;
 
-	PRINTF("          ##################  RESERVATION STATION  ##################\n");
-	PRINTF("  =============================================================================\n");
-	PRINTF("  %5s %9s %9s %9s %9s %9s %9s %9s\n", "Busy", "ROB", "Instr", "Vj", "Vk", "Qj", "Qk", "A");
-	PRINTF("  =============================================================================\n");
+	PRINTF("          ######################  RESERVATION STATION  #####################\n");
+	PRINTF("  ======================================================================================\n");
+	PRINTF("  %5s %9s %9s %9s %9s %9s %9s %9s %9s\n", "Busy", "Issue", "ROB", "Instr", "Vj", "Vk", "Qj", "Qk", "A");
+	PRINTF("  ======================================================================================\n");
 
 	for (i = 1; i < RS_NUM; i++)
 	{
-		PRINTF("  %5s %9d %9x %9x %9x %9d %9d %9x\n", g_rs_busy[i] ? "yes":"no ", g_rs_dest[i], g_rs_op[i], g_rs_vj[i], g_rs_vk[i], g_rs_qj[i], g_rs_qk[i], g_rs_a[i]);
+		PRINTF("  %5s %9s %9d %9x %9x %9x %9d %9d %9x\n", g_rs_busy[i] ? "yes":"no ", g_rs_issue[i] ? "yes":"no ",g_rs_dest[i], g_rs_op[i], g_rs_vj[i], g_rs_vk[i], g_rs_qj[i], g_rs_qk[i], g_rs_a[i]);
 	}	
 
-	PRINTF("  _____________________________________________________________________________\n");
-	PRINTF("          ###########################################################\n");
+	PRINTF("  ______________________________________________________________________________________\n");
+	PRINTF("          #################################################################\n");
 
 	return;
 }

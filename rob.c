@@ -116,6 +116,52 @@ rob (
 	return;
 }
 
+
+
+void
+rob_writeback (
+	__in  char alu0_issue_w[1],
+	__in  char alu0_result_w[32],
+	__in  char alu0_rob_w[3],
+	__in  char alu1_issue_w[1],
+	__in  char alu1_result_w[32],
+	__in  char alu1_rob_w[3]
+	)
+{
+	//
+	//  rob commit module should take at least two cycles
+	//  one for write result, one for commit(release rob entry)
+	//
+	
+	int nAlu0Rob = 0;
+	int nAlu0Result = 0;
+	int nAlu1Rob = 0;
+	int nAlu1Result = 0;
+
+
+
+	//
+	// write result to rob
+	//
+	
+	if (1 == alu0_issue_w[0])
+	{
+		charnbits2int(alu0_rob_w, &nAlu0Rob, 3);
+		char32bits2int(alu0_result_w, &nAlu0Result);
+		g_rob_value[nAlu0Rob] = nAlu0Result;
+		g_rob_ready[nAlu0Rob] = 1;
+	}
+
+	if (1 == alu1_issue_w[0])
+	{
+		charnbits2int(alu1_rob_w, &nAlu0Rob, 3);
+		char32bits2int(alu1_result_w, &nAlu1Result);
+		g_rob_value[nAlu1Rob] = nAlu1Result;
+		g_rob_ready[nAlu1Rob] = 1;
+	}
+	return;
+}
+
 void
 display_rob (void)
 {
@@ -157,7 +203,7 @@ display_rob (void)
 	{
 		if (0 == g_rob_ready[i])
 		{
-			PRINTF(" %-7s|", "");
+			PRINTF(" %-7d|", 0);
 		}
 		else
 		{
