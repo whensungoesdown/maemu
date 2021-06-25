@@ -98,9 +98,9 @@ register_stat (
 	}
 
 
-	PRINTF("  register_stat: rj %d, busy %d, reorder %d\n", nRjIdx, nRjBusy, nRjReorder);
-	PRINTF("  register_stat: rk %d, busy %d, reorder %d\n", nRkIdx, nRkBusy, nRkReorder);
-	PRINTF("  register_stat: rd %d, busy %d, reorder %d (new)\n", nRdIdx, nRdBusy, nRdReorder);
+	PRINTF(ID_PREFIX"  register_stat: rj %d, busy %d, reorder %d\n", nRjIdx, nRjBusy, nRjReorder);
+	PRINTF(ID_PREFIX"  register_stat: rk %d, busy %d, reorder %d\n", nRkIdx, nRkBusy, nRkReorder);
+	PRINTF(ID_PREFIX"  register_stat: rd %d, busy %d, reorder %d (new)\n", nRdIdx, nRdBusy, nRdReorder);
 
 	return;
 }

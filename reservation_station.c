@@ -146,52 +146,64 @@ reservation_station (
 	int i = 0;
 
 
-	//if (0 == in_valid[0]) return;
-	// get a new entry, suppose r
-	
-	//charnbits2int(r, &nR, 3);
-	nR = rs_alloc_entry();	
-
-	char32bits2int(instr, &nInstr);
-
-	charnbits2int(rj_busy, &nRjBusy, 1);
-	char32bits2int(rj_data, &nRjData);
-	charnbits2int(rj_reorder, &nRjReorder, 3);
-
-	charnbits2int(rk_busy, &nRkBusy, 1);
-	char32bits2int(rk_data, &nRkData);
-	charnbits2int(rk_reorder, &nRkReorder, 3);
-
-	charnbits2int(rob_idx, &nRobIdx, 3);
-
-
-	if (1 == nRjBusy)
+	if (1 == in_valid[0])
 	{
-		g_rs_qj[nR] = nRjReorder;
-		g_rs_vj[nR] = 0;
-	}
-	else
-	{
-		g_rs_qj[nR] = 0;
-		g_rs_vj[nR] = nRjData;
-	}
+		//
+		// allocate reservation entry
+		// ALU instruction Q
+		//
+
+		// get a new entry, suppose r
+
+		//charnbits2int(r, &nR, 3);
+		nR = rs_alloc_entry();	
+
+		char32bits2int(instr, &nInstr);
+
+		charnbits2int(rj_busy, &nRjBusy, 1);
+		char32bits2int(rj_data, &nRjData);
+		charnbits2int(rj_reorder, &nRjReorder, 3);
+
+		charnbits2int(rk_busy, &nRkBusy, 1);
+		char32bits2int(rk_data, &nRkData);
+		charnbits2int(rk_reorder, &nRkReorder, 3);
+
+		charnbits2int(rob_idx, &nRobIdx, 3);
 
 
-	if (1 == nRkBusy)
-	{
-		g_rs_qk[nR] = nRkReorder;
-		g_rs_vk[nR] = 0;
-	}
-	else
-	{
-		g_rs_qk[nR] = 0;
-		g_rs_vk[nR] = nRkData;
+		if (1 == nRjBusy)
+		{
+			g_rs_qj[nR] = nRjReorder;
+			g_rs_vj[nR] = 0;
+		}
+		else
+		{
+			g_rs_qj[nR] = 0;
+			g_rs_vj[nR] = nRjData;
+		}
+
+
+		if (1 == nRkBusy)
+		{
+			g_rs_qk[nR] = nRkReorder;
+			g_rs_vk[nR] = 0;
+		}
+		else
+		{
+			g_rs_qk[nR] = 0;
+			g_rs_vk[nR] = nRkData;
+		}
+
+		g_rs_busy[nR] = 1;
+		g_rs_issue[nR] = 0;
+		g_rs_dest[nR] = nRobIdx;
+		g_rs_op[nR] = nInstr;
+
 	}
 
-	g_rs_busy[nR] = 1;
-	g_rs_issue[nR] = 0;
-	g_rs_dest[nR] = nRobIdx;
-	g_rs_op[nR] = nInstr;
+	//
+	// Issue
+	//
 
 
 	//
@@ -367,21 +379,73 @@ reservation_station_writeback (
 	return;
 }
 
-void display_reservation_station (void)
+void
+reservation_station_commit (
+	__in char alu0_issue_c[1],
+	__in char alu0_rs_c[3],
+	__in char alu1_issue_c[1],
+	__in char alu1_rs_c[3]
+	)
+{
+	int nAlu0Rs = 0;
+	int nAlu1Rs = 0;
+
+	charnbits2int(alu0_rs_c, &nAlu0Rs, 3);
+
+	if (1 == alu0_issue_c[0])
+	{
+		g_rs_busy[nAlu0Rs] = 0;
+		g_rs_issue[nAlu0Rs] = 0;
+		g_rs_vj[nAlu0Rs] = 0;
+		g_rs_vk[nAlu0Rs] = 0;
+		g_rs_qj[nAlu0Rs] = 0;
+		g_rs_qk[nAlu0Rs] = 0;
+		g_rs_dest[nAlu0Rs] = 0;
+		g_rs_op[nAlu0Rs] = 0;
+		g_rs_a[nAlu0Rs] = 0;
+	}
+
+
+	charnbits2int(alu1_rs_c, &nAlu1Rs, 3);
+
+	if (1 == alu1_issue_c[0])
+	{
+		g_rs_busy[nAlu1Rs] = 0;
+		g_rs_issue[nAlu1Rs] = 0;
+		g_rs_vj[nAlu1Rs] = 0;
+		g_rs_vk[nAlu1Rs] = 0;
+		g_rs_qj[nAlu1Rs] = 0;
+		g_rs_qk[nAlu1Rs] = 0;
+		g_rs_dest[nAlu1Rs] = 0;
+		g_rs_op[nAlu1Rs] = 0;
+		g_rs_a[nAlu1Rs] = 0;
+	}
+
+	return;
+}
+
+void display_reservation_station (char* prefix)
 {
 	int i = 0;
-
+	
+	PRINTF("%s", prefix);
 	PRINTF("          ######################  RESERVATION STATION  #####################\n");
+	PRINTF("%s", prefix);
 	PRINTF("  ======================================================================================\n");
+	PRINTF("%s", prefix);
 	PRINTF("  %5s %9s %9s %9s %9s %9s %9s %9s %9s\n", "Busy", "Issue", "ROB", "Instr", "Vj", "Vk", "Qj", "Qk", "A");
+	PRINTF("%s", prefix);
 	PRINTF("  ======================================================================================\n");
 
 	for (i = 1; i < RS_NUM; i++)
 	{
+		PRINTF("%s", prefix);
 		PRINTF("  %5s %9s %9d %9x %9x %9x %9d %9d %9x\n", g_rs_busy[i] ? "yes":"no ", g_rs_issue[i] ? "yes":"no ",g_rs_dest[i], g_rs_op[i], g_rs_vj[i], g_rs_vk[i], g_rs_qj[i], g_rs_qk[i], g_rs_a[i]);
 	}	
 
+	PRINTF("%s", prefix);
 	PRINTF("  ______________________________________________________________________________________\n");
+	PRINTF("%s", prefix);
 	PRINTF("          #################################################################\n");
 
 	return;

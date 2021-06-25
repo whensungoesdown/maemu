@@ -49,7 +49,14 @@ reservation_station_writeback (
 	__in  char alu1_rob_w[3]
 	);
 
+void
+reservation_station_commit (
+	__in char alu0_issue_c[1],
+	__in char alu0_rs_c[3],
+	__in char alu1_issue_c[1],
+	__in char alu1_rs_c[3]
+	);
 
-void display_reservation_station (void);
+void display_reservation_station (char* prefix);
 
 #endif

@@ -280,6 +280,24 @@ dff_alu1_rob_d2e (
 
 
 
+void
+dff_alu0_rs_e2w (
+	__in  char clk,
+	__in  char rising_edge,
+	__in  char rst,
+	__in  char alu0_rs_e[3],
+	__out char alu0_rs_w[3]
+	)
+{
+	static char alu0_rs_e2w_reg[3] = {0};
+
+	if (0 == clk || 0 == rising_edge) return; // regester write only works at the rising edge
+
+	memcpy(alu0_rs_e2w_reg, alu0_rs_e, 3);
+	memcpy(alu0_rs_w, alu0_rs_e2w_reg, 3);
+
+	return;
+}
 
 void
 dff_alu0_issue_e2w (
@@ -338,6 +356,26 @@ dff_alu0_rob_e2w (
 	return;
 }
 
+
+void
+dff_alu1_rs_e2w (
+	__in  char clk,
+	__in  char rising_edge,
+	__in  char rst,
+	__in  char alu1_rs_e[3],
+	__out char alu1_rs_w[3]
+	)
+{
+	static char alu1_rs_e2w_reg[3] = {0};
+
+	if (0 == clk || 0 == rising_edge) return; // regester write only works at the rising edge
+
+	memcpy(alu1_rs_e2w_reg, alu1_rs_e, 3);
+	memcpy(alu1_rs_w, alu1_rs_e2w_reg, 3);
+
+	return;
+}
+
 void
 dff_alu1_issue_e2w (
 	__in  char clk,
@@ -391,6 +429,87 @@ dff_alu1_rob_e2w (
 
 	memcpy(alu1_rob_e2w_reg, alu1_rob_e, 3);
 	memcpy(alu1_rob_w, alu1_rob_e2w_reg, 3);
+
+	return;
+}
+
+
+
+
+
+
+void
+dff_alu0_rs_w2c (
+	__in  char clk,
+	__in  char rising_edge,
+	__in  char rst,
+	__in  char alu0_rs_w[3],
+	__out char alu0_rs_c[3]
+	)
+{
+	static char alu0_rs_w2c_reg[3] = {0};
+
+	if (0 == clk || 0 == rising_edge) return; // regester write only works at the rising edge
+
+	memcpy(alu0_rs_w2c_reg, alu0_rs_w, 3);
+	memcpy(alu0_rs_c, alu0_rs_w2c_reg, 3);
+
+	return;
+}
+
+void
+dff_alu0_issue_w2c (
+	__in  char clk,
+	__in  char rising_edge,
+	__in  char rst,
+	__in  char alu0_issue_w[1],
+	__out char alu0_issue_c[1]
+	)
+{
+	static char alu0_issue_w2c_reg[1] = {0};
+
+	if (0 == clk || 0 == rising_edge) return; // regester write only works at the rising edge
+
+	memcpy(alu0_issue_w2c_reg, alu0_issue_w, 1);
+	memcpy(alu0_issue_c, alu0_issue_w2c_reg, 1);
+
+	return;
+}
+
+void
+dff_alu1_rs_w2c (
+	__in  char clk,
+	__in  char rising_edge,
+	__in  char rst,
+	__in  char alu1_rs_w[3],
+	__out char alu1_rs_c[3]
+	)
+{
+	static char alu1_rs_w2c_reg[3] = {0};
+
+	if (0 == clk || 0 == rising_edge) return; // regester write only works at the rising edge
+
+	memcpy(alu1_rs_w2c_reg, alu1_rs_w, 3);
+	memcpy(alu1_rs_c, alu1_rs_w2c_reg, 3);
+
+	return;
+}
+
+void
+dff_alu1_issue_w2c (
+	__in  char clk,
+	__in  char rising_edge,
+	__in  char rst,
+	__in  char alu1_issue_w[1],
+	__out char alu1_issue_c[1]
+	)
+{
+	static char alu1_issue_w2c_reg[1] = {0};
+
+	if (0 == clk || 0 == rising_edge) return; // regester write only works at the rising edge
+
+	memcpy(alu1_issue_w2c_reg, alu1_issue_w, 1);
+	memcpy(alu1_issue_c, alu1_issue_w2c_reg, 1);
 
 	return;
 }

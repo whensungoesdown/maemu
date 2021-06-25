@@ -97,14 +97,14 @@ exu (
 	static char _alu1_rk_d[32] = {0};
 	static char _alu1_rob_d[3] = {0};
 
-	//static char alu0_rs_e[3] = {0};
+	static char alu0_rs_e[3] = {0};
 	static char alu0_issue_e[1] = {0};
 	static char alu0_op_e[4] = {0};
 	static char alu0_rj_e[32] = {0};
 	static char alu0_rk_e[32] = {0};
 	static char alu0_rob_e[3] = {0};
 
-	//static char alu1_rs_e[3] = {0};
+	static char alu1_rs_e[3] = {0};
 	static char alu1_issue_e[1] = {0};
 	static char alu1_op_e[4] = {0};
 	static char alu1_rj_e[32] = {0};
@@ -114,6 +114,7 @@ exu (
 
 	static char alu0_result_e[32] = {0};
 
+	static char _alu0_rs_e[3] = {0};
 	static char _alu0_issue_e[1] = {0};
 	static char _alu0_result_e[32] = {0};
 	static char _alu0_rob_e[3] = {0};
@@ -121,6 +122,7 @@ exu (
 
 	static char alu1_result_e[32] = {0};
 
+	static char _alu1_rs_e[3] = {0};
 	static char _alu1_issue_e[1] = {0};
 	static char _alu1_result_e[32] = {0};
 	static char _alu1_rob_e[3] = {0};
@@ -128,16 +130,29 @@ exu (
 
 
 
+	static char alu0_rs_w[3] = {0};
 	static char alu0_issue_w[1] = {0};
 	static char alu0_result_w[32] = {0};
 	static char alu0_rob_w[3] = {0};
 
-
+	static char alu1_rs_w[3] = {0};
 	static char alu1_issue_w[1] = {0};
 	static char alu1_result_w[32] = {0};
 	static char alu1_rob_w[3] = {0};
 
 
+	static char _alu0_rs_w[3] = {0};
+	static char _alu0_issue_w[1] = {0};
+
+	static char _alu1_rs_w[3] = {0};
+	static char _alu1_issue_w[1] = {0};
+
+
+	static char alu0_rs_c[3] = {0};
+	static char alu0_issue_c[1] = {0};
+
+	static char alu1_rs_c[3] = {0};
+	static char alu1_issue_c[1] = {0};
 
 
 	if (0 == clk)
@@ -176,13 +191,23 @@ exu (
 
 		// next stage
 
+		memcpy(_alu0_rs_e, alu0_rs_e, 3);
 		memcpy(_alu0_issue_e, alu0_issue_e, 1);
 		memcpy(_alu0_result_e, alu0_result_e, 32);
 		memcpy(_alu0_rob_e, alu0_rob_e, 3);
 
+		memcpy(_alu1_rs_e, alu1_rs_e, 3);
 		memcpy(_alu1_issue_e, alu1_issue_e, 1);
 		memcpy(_alu1_result_e, alu1_result_e, 32);
 		memcpy(_alu1_rob_e, alu1_rob_e, 3);
+
+
+		// next stage
+		memcpy(_alu0_rs_w, alu0_rs_w, 3);
+		memcpy(_alu0_issue_w, alu0_issue_w, 1);
+
+		memcpy(_alu1_rs_w, alu1_rs_w, 3);
+		memcpy(_alu1_issue_w, alu1_issue_w, 1);
 
 		return;
 	}
@@ -197,8 +222,8 @@ exu (
 
 		dff_instr_f2d(clk, rising_edge, rst, instr0, instr_d);
 		char32bits2int(instr_d, &nInstr_d);
-		PRINTF("EXU ID\n");
-		PRINTF("  instr_d: 0x%x\n", nInstr_d);
+		PRINTF(ID_PREFIX"EXU ID\n");
+		PRINTF(ID_PREFIX"  instr_d: 0x%x\n", nInstr_d);
 
 		
 		//
@@ -233,7 +258,7 @@ exu (
 
 		if (1 == nRdWen)
 		{
-			PRINTF("  WB: rf write rd %d: 0x%x\n", nRdIdx, nRd);
+			PRINTF(ID_PREFIX"  WB: rf write rd %d: 0x%x\n", nRdIdx, nRd);
 		}
 	}
 	else
@@ -245,6 +270,8 @@ exu (
 		//
 		// decode
 		//
+
+		PRINTF(ID_PREFIX"  Decode instr_d 0x%x\n", return_int_char32bits(instr_d));
 		decode(instr_d, rj_idx_d, rk_idx_d, rd_idx, simm, 
 				alloc_rs_d, alloc_rob_d,
 				regwrite);
@@ -276,7 +303,8 @@ exu (
 		char32bits2int(rj_d, &nRj_d);
 		char32bits2int(rk_d, &nRk_d);
 
-		PRINTF("  ID stage: rj_d: 0x%x, rk_d: 0x%x\n", nRj_d, nRk_d);
+		PRINTF(ID_PREFIX"  ID stage: alloc_rs_d: %d, alloc_rob_d: %d, rj_d: 0x%x, rk_d: 0x%x\n", 
+				alloc_rs_d[0], alloc_rob_d[0], nRj_d, nRk_d);
 
 		rob_valid[0] = alloc_rob_d[0];
 
@@ -285,7 +313,7 @@ exu (
 		// allocat rob
 		//
 		rob(rob_valid, rob_ready, rob_idx, instr_d, rd_idx);
-		display_rob();
+		display_rob(ID_PREFIX);
 
 
 		register_stat(
@@ -339,7 +367,7 @@ exu (
 				alu1_rob_d
 				);
 
-		display_reservation_station();
+		display_reservation_station(ID_PREFIX);
 
 		//
 		// Check conflicts, then issue to funtional units such as ALU 
@@ -366,7 +394,7 @@ exu (
 //		PRINTF("!!!!!!!!!_alu0_rob_d:");
 //		print_charnbits(_alu0_rob_d, 3);
 
-		//dff_alu0_rs_d2e(clk, rising_edge, rst, _alu0_rs_d, alu0_rs_e);
+		dff_alu0_rs_d2e(clk, rising_edge, rst, _alu0_rs_d, alu0_rs_e);
 		dff_alu0_issue_d2e(clk, rising_edge, rst, _alu0_issue_d, alu0_issue_e);
 		dff_alu0_op_d2e(clk, rising_edge, rst, _alu0_op_d, alu0_op_e);
 		dff_alu0_rj_d2e(clk, rising_edge, rst, _alu0_rj_d, alu0_rj_e);
@@ -401,7 +429,7 @@ exu (
 
 
 
-		//dff_alu1_rs_d2e(clk, rising_edge, rst, _alu1_rs_d, alu1_rs_e);
+		dff_alu1_rs_d2e(clk, rising_edge, rst, _alu1_rs_d, alu1_rs_e);
 		dff_alu1_issue_d2e(clk, rising_edge, rst, _alu1_issue_d, alu1_issue_e);
 		dff_alu1_op_d2e(clk, rising_edge, rst, _alu1_op_d, alu1_op_e);
 		dff_alu1_rj_d2e(clk, rising_edge, rst, _alu1_rj_d, alu1_rj_e);
@@ -414,29 +442,27 @@ exu (
 		//
 		// combinational logic
 		//
+
+		
 		PRINTF("\nEX stage: **********************************************\n");
 
 		alu0(alu0_issue_e, alu0_op_e, alu0_rj_e, alu0_rk_e, alu0_result_e);
-		PRINTF("  ALU0 issue %d\n", alu0_issue_e[0]);
-		PRINTF("           rj:");
-		print_char32bits(alu0_rj_e);
-		PRINTF("           rk:");
-		print_char32bits(alu0_rk_e);
-		PRINTF("       result:");
-		print_char32bits(alu0_result_e);
-		PRINTF("          rob:");
-		print_charnbits(alu0_rob_e, 3);
+		PRINTF(EX_PREFIX"  ALU0 issue %s, rob %d, rj 0x%x, rk 0x%x, result 0x%x\n", 
+				alu0_issue_e[0] == 1 ? "yes" : "no",
+				return_int_charnbits(alu0_rob_e, 3),
+				return_int_char32bits(alu0_rj_e),
+				return_int_char32bits(alu0_rk_e),
+				return_int_char32bits(alu0_result_e)
+				);
 
 		alu1(alu1_issue_e, alu1_op_e, alu1_rj_e, alu1_rk_e, alu1_result_e);
-		PRINTF("  ALU1 issue %d\n", alu1_issue_e[0]);
-		PRINTF("           rj:");
-		print_char32bits(alu1_rj_e);
-		PRINTF("           rk:");
-		print_char32bits(alu1_rk_e);
-		PRINTF("       result:");
-		print_char32bits(alu1_result_e);
-		PRINTF("          rob:");
-		print_charnbits(alu1_rob_e, 3);
+		PRINTF(EX_PREFIX"  ALU1 issue %s, rob %d, rj 0x%x, rk 0x%x, result 0x%x\n", 
+				alu1_issue_e[0] == 1 ? "yes" : "no",
+				return_int_charnbits(alu1_rob_e, 3),
+				return_int_char32bits(alu1_rj_e),
+				return_int_char32bits(alu1_rk_e),
+				return_int_char32bits(alu1_result_e)
+				);
 
 	}
 
@@ -450,10 +476,12 @@ exu (
 		//
 		// sequential logic
 		//
+		dff_alu0_rs_e2w(clk, rising_edge, rst, _alu0_rs_e, alu0_rs_w);
 		dff_alu0_issue_e2w(clk, rising_edge, rst, _alu0_issue_e, alu0_issue_w);
 		dff_alu0_result_e2w(clk, rising_edge, rst, _alu0_result_e, alu0_result_w);
 		dff_alu0_rob_e2w(clk, rising_edge, rst, _alu0_rob_e, alu0_rob_w);
 
+		dff_alu1_rs_e2w(clk, rising_edge, rst, _alu1_rs_e, alu1_rs_w);
 		dff_alu1_issue_e2w(clk, rising_edge, rst, _alu1_issue_e, alu1_issue_w);
 		dff_alu1_result_e2w(clk, rising_edge, rst, _alu1_result_e, alu1_result_w);
 		dff_alu1_rob_e2w(clk, rising_edge, rst, _alu1_rob_e, alu1_rob_w);
@@ -471,6 +499,8 @@ exu (
 
 		PRINTF("\nWB stage: **********************************************\n");
 
+
+
 		reservation_station_writeback(
 				alu0_issue_w,
 				alu0_result_w,
@@ -481,7 +511,7 @@ exu (
 				);
 
 
-		display_reservation_station();
+		display_reservation_station(WB_PREFIX);
 
 		rob_writeback(
 				alu0_issue_w, 
@@ -492,8 +522,63 @@ exu (
 				alu1_rob_w 
 				);
 
-		display_rob();
+		display_rob(WB_PREFIX);
 
 	}
+
+
+
+	//
+	// Next stage
+	//  CMT
+	//
+	
+	if (rising_edge)
+	{
+		//
+		// sequential logic
+		//
+		
+		dff_alu0_rs_w2c(clk, rising_edge, rst, _alu0_rs_w, alu0_rs_c);
+		dff_alu0_issue_w2c(clk, rising_edge, rst, _alu0_issue_w, alu0_issue_c);
+
+		dff_alu1_rs_w2c(clk, rising_edge, rst, _alu1_rs_w, alu1_rs_c);
+		dff_alu1_issue_w2c(clk, rising_edge, rst, _alu1_issue_w, alu1_issue_c);
+	}
+	else
+	{
+		//
+		// combinational logic
+		//
+
+
+		PRINTF("\nCMT stage: **********************************************\n");
+
+		if (1 == alu0_issue_c[0])
+		{
+			PRINTF(CMT_PREFIX"  RS free entry %d\n", return_int_charnbits(alu0_rs_c, 3));
+		}
+
+		if (1 == alu1_issue_c[0])
+		{
+			PRINTF(CMT_PREFIX"  RS free entry %d\n", return_int_charnbits(alu1_rs_c, 3));
+		}
+
+		// free reservation station entries
+		reservation_station_commit(
+				alu0_issue_c, 
+				alu0_rs_c,
+				alu1_issue_c,
+				alu1_rs_c
+				);
+
+		display_reservation_station(CMT_PREFIX);
+
+		// if the ooo has 4 retire, then the register file should have 4 write port?
+//		rob_commit();
+
+	}
+
+
 	return;
 }

@@ -26,9 +26,11 @@ void top (char clk, int b_rising_edge, int b_falling_edge)
 	char allzero[32] = {0};
 	char const0[1] = {0};
 
+	static int nCycles = 0;
+
 
 	printf("-------------------------------------------------------------------------------------------\n");
-	if (b_rising_edge) printf("/ (rising edge)  ");
+	if (b_rising_edge) printf("\n\n\n\n\n# \n# / (rising edge)  CYCLE %d  \n# \n\n", nCycles++);
 	if (b_falling_edge) printf("\\ (falling edge)  ");
 
 	if (clk)
@@ -68,7 +70,7 @@ void top (char clk, int b_rising_edge, int b_falling_edge)
 		// combinational logic
 		pc_lat(pc_next_ena, pc_next, pc_fetch);
 		char32bits2int(pc_fetch, &nPcFetch);
-		PRINTF("  pc_fetch: 0x%x\n", nPcFetch);
+		PRINTF(IF_PREFIX"  pc_fetch: 0x%x\n", nPcFetch);
 	}
 
 	//

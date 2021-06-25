@@ -132,6 +132,14 @@ dff_alu1_rob_d2e (
 
 
 
+void
+dff_alu0_rs_e2w (
+	__in  char clk,
+	__in  char rising_edge,
+	__in  char rst,
+	__in  char alu0_rs_e[3],
+	__out char alu0_rs_w[3]
+	);
 
 void
 dff_alu0_issue_e2w (
@@ -161,6 +169,14 @@ dff_alu0_rob_e2w (
 	);
 
 void
+dff_alu1_rs_e2w (
+	__in  char clk,
+	__in  char rising_edge,
+	__in  char rst,
+	__in  char alu1_rs_e[3],
+	__out char alu1_rs_w[3]
+	);
+void
 dff_alu1_issue_e2w (
 	__in  char clk,
 	__in  char rising_edge,
@@ -186,4 +202,47 @@ dff_alu1_rob_e2w (
 	__in  char alu1_rob_e[3],
 	__out char alu1_rob_w[3]
 	);
+
+
+
+
+
+
+
+void
+dff_alu0_rs_w2c (
+	__in  char clk,
+	__in  char rising_edge,
+	__in  char rst,
+	__in  char alu0_rs_w[3],
+	__out char alu0_rs_c[3]
+	);
+
+void
+dff_alu0_issue_w2c (
+	__in  char clk,
+	__in  char rising_edge,
+	__in  char rst,
+	__in  char alu0_issue_w[1],
+	__out char alu0_issue_c[1]
+	);
+
+void
+dff_alu1_rs_w2c (
+	__in  char clk,
+	__in  char rising_edge,
+	__in  char rst,
+	__in  char alu1_rs_w[3],
+	__out char alu1_rs_c[3]
+	);
+
+void
+dff_alu1_issue_w2c (
+	__in  char clk,
+	__in  char rising_edge,
+	__in  char rst,
+	__in  char alu1_issue_w[1],
+	__out char alu1_issue_c[1]
+	);
+
 #endif

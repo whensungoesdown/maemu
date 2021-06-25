@@ -18,11 +18,15 @@ int getBit(int n, int k);
 
 int char32bits2int (char input[], int* poutput);
 
+int return_int_char32bits(char input[]);
+
 int int2char32bits (int input, char output[]);
 
 int print_char32bits (char* input);
 
 int charnbits2int (char input[], int* poutput, int n);
+
+int return_int_charnbits(char input[], int n);
 
 int int2charnbits (int input, char output[], int n);
 

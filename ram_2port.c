@@ -132,23 +132,23 @@ ram_2port (
 	}
 
 
-	PRINTF("RAM\n");
-	if (0 == wen_a[0])
-	{
-		PRINTF("  port_a read 0x%x: 0x%x\n", nAddr_a * 4, nQ_a);
-	}
-	else
-	{
-		PRINTF("  port_a write 0x%x: 0x%x\n", nAddr_a * 4, nData_a);
-	}
-	if (0 == wen_b[0])
-	{
-		PRINTF("  port_b read 0x%x: 0x%x\n", nAddr_b * 4, nQ_b);
-	}
-	else
-	{
-		PRINTF("  port_b write 0x%x: 0x%x\n", nAddr_b * 4, nData_b);
-	}
+//	PRINTF("RAM\n");
+//	if (0 == wen_a[0])
+//	{
+//		PRINTF("  port_a read 0x%x: 0x%x\n", nAddr_a * 4, nQ_a);
+//	}
+//	else
+//	{
+//		PRINTF("  port_a write 0x%x: 0x%x\n", nAddr_a * 4, nData_a);
+//	}
+//	if (0 == wen_b[0])
+//	{
+//		PRINTF("  port_b read 0x%x: 0x%x\n", nAddr_b * 4, nQ_b);
+//	}
+//	else
+//	{
+//		PRINTF("  port_b write 0x%x: 0x%x\n", nAddr_b * 4, nData_b);
+//	}
 
 	return;
 }

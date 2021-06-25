@@ -163,13 +163,16 @@ rob_writeback (
 }
 
 void
-display_rob (void)
+display_rob (char* prefix)
 {
 	int i = 0;
 
 
+	PRINTF("%s", prefix);
 	PRINTF("          @@@@@@@@@@@@@@@@@@@@@  REORDER BUFFER  @@@@@@@@@@@@@@@@@@@@\n");
+	PRINTF("%s", prefix);
 	PRINTF("  ____________________________________________________________________________\n");
+	PRINTF("%s", prefix);
 	PRINTF("  || Busy    ||");
 	for (i = 1; i < ROB_NUM; i++)
 	{
@@ -184,6 +187,7 @@ display_rob (void)
 	}
 	PRINTF("\n");
 
+	PRINTF("%s", prefix);
 	PRINTF("  || RegDest ||");
 	for (i = 1; i < ROB_NUM; i++)
 	{
@@ -191,6 +195,7 @@ display_rob (void)
 	}
 	PRINTF("\n");
 
+	PRINTF("%s", prefix);
 	PRINTF("  || Instr   ||");
 	for (i = 1; i < ROB_NUM; i++)
 	{
@@ -198,6 +203,7 @@ display_rob (void)
 	}
 	PRINTF("\n");
 
+	PRINTF("%s", prefix);
 	PRINTF("  || Value   ||");
 	for (i = 1; i < ROB_NUM; i++)
 	{
@@ -212,6 +218,7 @@ display_rob (void)
 	}
 	PRINTF("\n");
 	
+	PRINTF("%s", prefix);
 	PRINTF("  || Ready   ||");
 	for (i = 1; i < ROB_NUM; i++)
 	{
@@ -225,6 +232,8 @@ display_rob (void)
 		}
 	}
 	PRINTF("\n");
+	PRINTF("%s", prefix);
 	PRINTF("  ____________________________________________________________________________\n");
+	PRINTF("%s", prefix);
 	PRINTF("          @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
 }

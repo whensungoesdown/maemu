@@ -13,13 +13,13 @@ int top (char bit_clk, int b_rising_edge, int b_falling_edge);
 
 int main (void)
 {
-	int high_cycle_count = 0;
-	int low_cycle_count = 0;
+	int high_unit_count = 0;
+	int low_unit_count = 0;
 	int b_rising_edge = 0;
 	int b_falling_edge = 0;
 	char bit_clk =0;
 
-	int run_cycles = 0;
+	int run_units = 0;
 
 	
 	printf("Microarchitecture emulator\n");
@@ -31,12 +31,12 @@ int main (void)
 	b_falling_edge = 0;
 	bit_clk = 1;
 
-	while (run_cycles < RUN_UNITS)
+	while (run_units < RUN_UNITS)
 	{
 
 		if (1 == bit_clk)
 		{
-			if (high_cycle_count++ < HIGH_UNIT)
+			if (high_unit_count++ < HIGH_UNIT)
 			{
 			}
 			else
@@ -45,20 +45,20 @@ int main (void)
 
 				bit_clk = 0;
 				b_falling_edge = 1;
-				high_cycle_count = 0; // clear to 0
+				high_unit_count = 0; // clear to 0
 				continue;
 			}
 		}
 		else if (0 == bit_clk)
 		{
-			if (low_cycle_count++ < LOW_UNIT)
+			if (low_unit_count++ < LOW_UNIT)
 			{
 			}
 			else
 			{
 				bit_clk = 1;
 				b_rising_edge = 1;
-				low_cycle_count = 0;
+				low_unit_count = 0;
 				continue;
 			}
 		}
@@ -75,7 +75,7 @@ int main (void)
 		if (1 == b_rising_edge) b_rising_edge = 0;
 		if (1 == b_falling_edge) b_falling_edge = 0;
 
-		run_cycles++;
+		run_units++;
 	}
 
 

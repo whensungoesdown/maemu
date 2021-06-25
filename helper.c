@@ -51,6 +51,15 @@ int char32bits2int (char input[], int* poutput)
 	return 0;
 }
 
+int return_int_char32bits(char input[])
+{
+	int ret = 0;
+
+	char32bits2int(input, &ret);
+
+	return ret;
+}
+
 int int2char32bits (int input, char output[])
 {
 	int i = 0;
@@ -95,6 +104,15 @@ int charnbits2int (char input[], int* poutput, int n)
 	*poutput = result;
 
 	return 0;
+}
+
+int return_int_charnbits(char input[], int n)
+{
+	int ret = 0;
+
+	charnbits2int(input, &ret, n);
+
+	return ret;
 }
 
 int int2charnbits (int input, char output[], int n)

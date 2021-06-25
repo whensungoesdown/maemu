@@ -34,7 +34,7 @@ decode (
 
 	if (0 == memcmp(instr, BUBBLE, 32))
 	{
-		PRINTF("  decode: pipeline BUBBLE\n");
+		PRINTF(ID_PREFIX"  decode: pipeline BUBBLE\n");
 
 		need_rs[0] = 0;
 		need_rob[0] = 0;
@@ -52,7 +52,7 @@ decode (
 		charnbits2int(rj_idx, &nRjIdx, 5);
 		charnbits2int(rd_idx, &nRdIdx, 5);
 
-		PRINTF("  decode: ADDI.W $%d, $%d, %d\n", nRdIdx, nRjIdx, nSimm);
+		PRINTF(ID_PREFIX"  decode: ADDI.W $%d, $%d, %d\n", nRdIdx, nRjIdx, nSimm);
 		need_rs[0] = 1;
 		need_rob[0] = 1;
 		regwrite[0] = 1;
@@ -67,7 +67,7 @@ decode (
 		charnbits2int(rj_idx, &nRjIdx, 5);
 		charnbits2int(rk_idx, &nRkIdx, 5);
 
-		PRINTF("  decode: ADD.W $%d, $%d, $%d\n", nRdIdx, nRjIdx, nRkIdx);
+		PRINTF(ID_PREFIX"  decode: ADD.W $%d, $%d, $%d\n", nRdIdx, nRjIdx, nRkIdx);
 
 		need_rs[0] = 1;
 		need_rob[0] = 1;
@@ -75,7 +75,7 @@ decode (
 	}
 	else
 	{
-		printf("!!!!!!!!!!! Invalid instruction\n");
+		printf(ID_PREFIX"!!!!!!!!!!! Invalid instruction\n");
 	}
 
 	return;

@@ -21,6 +21,6 @@ rob_writeback (
 	);
 
 void
-display_rob (void);
+display_rob (char* prefix);
 
 #endif
