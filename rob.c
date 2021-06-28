@@ -163,6 +163,41 @@ rob_writeback (
 }
 
 void
+rob_commit (
+	__out char rd_wen_c[1],
+	__out char rd_idx_c[5],
+	__out char rd_value_c[32]
+	)
+{
+
+	rd_wen_c[0] = 0;
+
+	if (g_rob_head == g_rob_tail)
+	{
+		// rob empty
+		return;
+	}
+
+	//
+	// retire 1 for now
+	//
+	if ((1 == g_rob_busy[g_rob_head]) && (1 == g_rob_ready[g_rob_head]))
+	{
+		rd_wen_c[0] = 1;	
+		int2charnbits(g_rob_dest[g_rob_head], rd_idx_c, 5);
+		int2char32bits(g_rob_value[g_rob_head], rd_value_c);
+
+		g_rob_busy[g_rob_head] = 0;
+		g_rob_dest[g_rob_head] = 0;
+		g_rob_opcode[g_rob_head] = 0;
+		g_rob_ready[g_rob_head] = 0;
+
+		g_rob_head++;
+	}
+	return;
+}
+
+void
 display_rob (char* prefix)
 {
 	int i = 0;

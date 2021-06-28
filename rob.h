@@ -21,6 +21,13 @@ rob_writeback (
 	);
 
 void
+rob_commit (
+	__out char rd_wen_c[1],
+	__out char rd_idx_c[5],
+	__out char rd_value_c[32]
+	);
+
+void
 display_rob (char* prefix);
 
 #endif

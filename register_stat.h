@@ -19,4 +19,10 @@ register_stat (
 	__in  char rd_reorder[1]
 	);
 
+void
+register_stat_commit (
+	__in  char rd_wen_c[1],
+	__in  char rd_idx_c[5]
+	);
+
 #endif

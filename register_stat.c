@@ -104,3 +104,30 @@ register_stat (
 
 	return;
 }
+
+void
+register_stat_commit (
+	__in  char rd_wen_c[1],
+	__in  char rd_idx_c[5]
+	)
+{
+	int nRdIdx = 0;
+
+	charnbits2int(rd_idx_c, &nRdIdx, 5);
+
+	if (0 == rd_wen_c[0])
+	{
+		// do nothing
+	}
+	else if (0 == nRdIdx)
+	{
+		// do nothing
+		printf("regstate: write regs[0]!!!!\n");
+	}
+	else
+	{
+		g_regstat_busy[nRdIdx] = 0;
+		g_regstat_reorder[nRdIdx] = 0;
+	}
+
+}

@@ -12,10 +12,10 @@
 
 void
 exu (
-	__in char clk,
-	__in char rising_edge,
-	__in char rst,
-	__in char instr0[32]
+	__in  char clk,
+	__in  char rising_edge,
+	__in  char rst,
+	__in  char instr0[32]
     )
 {
 	int nInstr_d = 0;
@@ -23,14 +23,14 @@ exu (
 
 	static char instr_d[32] = {0};
 
-	static char rd[32] = {0};
-	static char rd_wen[1] = {0};
+//	static char rd[32] = {0};
+//	static char rd_wen[1] = {0};
 	static char rj_d[32] = {0};
 	static char rk_d[32] = {0};
 
 	static char rj_idx_d[5] = {0};
 	static char rk_idx_d[5] = {0};
-	static char rd_idx[5] = {0};
+	static char rd_idx_d[5] = {0};
 
 	static char rj_busy_d[1] = {0};
 	static char rk_busy_d[1] = {0};
@@ -41,6 +41,11 @@ exu (
 //	static char rd_reorder[3] = {0};
 
 	static char simm[32] = {0};
+
+
+	static char rd_wen_c[1];
+	static char rd_idx_c[5];
+	static char rd_value_c[32];
 
 
 	int nRdIdx = 0;
@@ -240,9 +245,9 @@ exu (
 				//		rj_reorder,
 				//		rk_reorder,
 
-				rd_wen,
-				rd_idx,
-				rd,
+				rd_wen_c,
+				rd_idx_c,
+				rd_value_c,
 				//		rd_busy,
 				//		rd_reorder,
 
@@ -252,9 +257,9 @@ exu (
 		  );
 
 
-		charnbits2int(rd_idx, &nRdIdx, 5);
-		char32bits2int(rd, &nRd);
-		charnbits2int(rd_wen, &nRdWen, 1);
+		charnbits2int(rd_idx_c, &nRdIdx, 5);
+		char32bits2int(rd_value_c, &nRd);
+		charnbits2int(rd_wen_c, &nRdWen, 1);
 
 		if (1 == nRdWen)
 		{
@@ -272,7 +277,7 @@ exu (
 		//
 
 		PRINTF(ID_PREFIX"  Decode instr_d 0x%x\n", return_int_char32bits(instr_d));
-		decode(instr_d, rj_idx_d, rk_idx_d, rd_idx, simm, 
+		decode(instr_d, rj_idx_d, rk_idx_d, rd_idx_d, simm, 
 				alloc_rs_d, alloc_rob_d,
 				regwrite);
 
@@ -289,9 +294,9 @@ exu (
 				//		rj_reorder,
 				//		rk_reorder,
 
-				rd_wen,
-				rd_idx,
-				rd,
+				rd_wen_c,
+				rd_idx_c,
+				rd_value_c,
 				//		rd_busy,
 				//		rd_reorder,
 
@@ -312,7 +317,7 @@ exu (
 		//
 		// allocat rob
 		//
-		rob(rob_valid, rob_ready, rob_idx, instr_d, rd_idx);
+		rob(rob_valid, rob_ready, rob_idx, instr_d, rd_idx_d);
 		display_rob(ID_PREFIX);
 
 
@@ -325,7 +330,7 @@ exu (
 				rk_reorder_d,
 
 				regwrite, // rd_wen  // todo: rdwrite
-				rd_idx,
+				rd_idx_d,
 				regwrite, // rd_busy
 				rob_idx
 			     );
@@ -574,8 +579,11 @@ exu (
 
 		display_reservation_station(CMT_PREFIX);
 
-		// if the ooo has 4 retire, then the register file should have 4 write port?
-//		rob_commit();
+		// if the ooo has 4 retire, then the register file should have 4 write port? YES
+		//
+		rob_commit(rd_wen_c, rd_idx_c, rd_value_c);
+		display_rob(CMT_PREFIX);
+		register_stat_commit(rd_wen_c, rd_idx_c);
 
 	}
 
