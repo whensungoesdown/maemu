@@ -29,19 +29,23 @@ This is to simulate the setup time for the dff.
 Otherwise, the function calling order will affect the circuit simulation
 
 
-##Example
+Example
 --------------------
 Runs the following 3 instructions:
 
+``````
 ADD.W $3, $1, $2
 ADD.W $4, $0, $3
 ADD.W $5, $0, $1
+``````
 
+5 level pipeline:
+IF ID EX WB CMT
 
-fetch 1 instruction per cycle
+fetch 1 instruction per cycle	\
 retire 1 instruction per cycle
 
-reservation station 8 entries
+reservation station 8 entries	\
 reorder buffer 8 entries
 
 
